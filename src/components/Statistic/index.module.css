@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 14px;
+  color: #9b9b9b;
+  font-weight: 400;
+}
+
+.value {
+  font-family: 'DIN Condensed';
+  font-size: 30px;
+  font-weight: bold;
+}

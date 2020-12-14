@@ -1,0 +1,16 @@
+.solid-gray {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+.outline-green {
+  background-color: #fff;
+  border: #7ed321 solid 2px;
+  border-radius: 8px;
+}
+
+.outline-gray {
+  border-color: #fff;
+  border: #9b9b9b solid 2px;
+  border-radius: 8px;
+}

@@ -1,16 +1,101 @@
-.homeContainer {
+/* dial */
+.dial-content {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-top: 200rpx;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
-
-.homeTitle {
-  font-size: 45rpx;
+.dial-numerical {
+  font-family: 'DIN Condensed';
+  font-size: 40px;
   font-weight: bold;
-  margin: 20rpx 0;
+  line-height: 30px;
+}
+.dial-numerical-current {
+  font-size: 50px;
+}
+.dial-goal {
+  font-size: 14px;
+  color: #9b9b9b;
 }
 
-.homeInfo {
-  font-size: 36rpx;
-  margin: 8rpx 0;
-  color: #555;
+/* statistic */
+.statistic-container {
+  display: flex;
+  justify-content: space-between;
+  width: 303px;
+  margin-top: 28px;
+}
+
+.statistic-small-text {
+  font-size: 16px;
+}
+
+/* panel */
+.panel-text {
+  font-size: 16px;
+  text-align: center;
+  line-height: 45px;
+  color: #4a4a4a;
+}
+
+/* record */
+.record-title {
+  display: flex;
+  width: 342px;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 16px;
+  margin-top: 15px;
+}
+.record-list {
+  margin-top: 14px;
+}
+
+.record-item {
+  display: flex;
+  padding: 0 15px;
+  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  color: #353535;
+}
+.record-item-left {
+  font-size: 14px;
+}
+.record-item-date {
+  font-family: 'DIN Condensed';
+  font-size: 18px;
+  margin-left: 8px;
+}
+.record-item-duration {
+  margin-left: 16px;
+  color: #9b9b9b;
+}
+.record-item-right {
+  font-family: 'DIN Condensed';
+  font-size: 18px;
+}
+
+/* home */
+.container {
+  align-items: center;
+}
+
+.panels {
+  display: flex;
+  width: 312px;
+  justify-content: space-between;
+  margin-top: 13px;
+}
+
+.dial {
+  margin-top: 24px;
+}
+
+.divider {
+  margin-top: 14px;
 }

@@ -1,0 +1,30 @@
+.edit {
+  width: 12px;
+  height: 12px;
+  padding: 2px;
+}
+.question {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+.grid-mode {
+  width: 18px;
+  height: 18px;
+}
+
+.list-mode {
+  width: 18px;
+  height: 18px;
+}
+
+.share {
+  width: 24px;
+  height: 19px;
+}
+
+.cow {
+  width: 17px;
+  height: 17px;
+}

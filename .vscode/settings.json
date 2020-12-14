@@ -1,0 +1,5 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsserver.pluginPaths": ["typescript-plugin-css-modules"],
+  "editor.formatOnSave": true
+}

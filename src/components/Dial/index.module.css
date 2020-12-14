@@ -1,0 +1,40 @@
+.container {
+  width: 286px;
+  height: 286px;
+  clip-path: circle(50%);
+  position: relative;
+  background-color: #f5f7fa;
+}
+.outer {
+  width: 286px;
+  height: 286px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.gap {
+  width: 269px;
+  height: 269px;
+  background-color: #fff;
+  position: absolute;
+  top: 8.5px;
+  left: 8.5px;
+  clip-path: circle(50%);
+}
+.inner {
+  width: 255px;
+  height: 255px;
+  clip-path: circle(50%);
+  position: absolute;
+  top: 7px;
+  left: 7px;
+}
+.content {
+  background-color: #fff;
+  width: 156px;
+  height: 156px;
+  top: 49.5px;
+  left: 49.5px;
+  position: absolute;
+  clip-path: circle(50%);
+}
