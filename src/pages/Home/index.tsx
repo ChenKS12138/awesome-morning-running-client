@@ -8,8 +8,9 @@ import {
   Divider,
   Panel,
   Modal,
+  Avatar,
 } from '@/components';
-import { useDuckState, DuckProps } from '@/utils';
+import { useDuckState, DuckProps, numToChineseCharacter } from '@/utils';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
@@ -22,47 +23,54 @@ export default Home;
 
 function Home() {
   const { duck, store, dispatch } = useDuckState(HomeDuck);
-  const { showHistoryRecord, showRankList } = duck.selectors(store);
+
+  const {
+    showHistoryRecord,
+    showRankList,
+    totalRunningCount,
+    currentRunningCount,
+    compensatoryCount,
+    ranking,
+    speed,
+  } = duck.selectors(store);
 
   const handleModalMaskClick = useCallback(() => {
     dispatch({ type: duck.types.HIDE_MODAL });
   }, [dispatch]);
 
+  const handleShowRankList = useCallback(() => {
+    dispatch({ type: duck.types.SHOW_RANK_LIST });
+  }, [dispatch]);
+
+  const handleShowHistoryRecord = useCallback(() => {
+    dispatch({ type: duck.types.SHOW_HISTORY_RECORD });
+  }, [dispatch]);
+
   return (
     <>
       <View className={styles.container}>
-        <HomeDial total={60} current={30} goal={'跑操目标'} />
-        <HomeStatistic compensatedCount={10} rank={123} speed="7'33''" />
+        <HomeDial total={totalRunningCount} current={currentRunningCount} goal={'跑操目标'} />
+        <HomeStatistic compensatoryCount={compensatoryCount} ranking={ranking} speed={speed} />
         <view className={styles.panels}>
           <Panel.SolidGray width="146px" height="45px">
-            <view
-              className={styles['panel-text']}
-              onClick={() => {
-                dispatch({ type: duck.types.SHOW_RANK_LIST });
-              }}
-            >
+            <view className={styles['panel-text']} onClick={handleShowRankList}>
               今日排行榜
             </view>
           </Panel.SolidGray>
           <Panel.SolidGray width="146px" height="45px">
-            <view
-              className={styles['panel-text']}
-              onClick={() => {
-                dispatch({ type: duck.types.SHOW_HISTORY_RECORD });
-              }}
-            >
+            <view className={styles['panel-text']} onClick={handleShowHistoryRecord}>
               历史跑操记录
             </view>
           </Panel.SolidGray>
         </view>
         <Divider className={styles.divider} />
-        <HomeRecord />
+        <HomeRecord dispatch={dispatch} store={store} duck={duck} />
       </View>
       <Modal x-if={showRankList} onClickMask={handleModalMaskClick}>
-        <view>排行榜</view>
+        <HomeRankListModal dispatch={dispatch} store={store} duck={duck} />
       </Modal>
       <Modal x-if={showHistoryRecord} onClickMask={handleModalMaskClick}>
-        <view>历史记录</view>
+        <HomeHistoryRecordModal dispatch={dispatch} store={store} duck={duck} />
       </Modal>
     </>
   );
@@ -107,12 +115,12 @@ function HomeDial({ goal, total, current }: IHomeDial) {
 }
 
 interface IHomeStatistic {
-  compensatedCount: number;
-  rank: number;
+  compensatoryCount: number;
+  ranking: number;
   speed: string;
 }
 
-function HomeStatistic({ compensatedCount, rank, speed }: IHomeStatistic) {
+function HomeStatistic({ compensatoryCount, ranking, speed }: IHomeStatistic) {
   return (
     <view className={styles['statistic-container']}>
       <Statistic>
@@ -121,7 +129,7 @@ function HomeStatistic({ compensatedCount, rank, speed }: IHomeStatistic) {
           <Icon.Question />
         </Statistic.Title>
         <Statistic.Value>
-          <text>+{compensatedCount}</text>
+          <text>+{compensatoryCount}</text>
         </Statistic.Value>
       </Statistic>
       <Statistic>
@@ -131,7 +139,7 @@ function HomeStatistic({ compensatedCount, rank, speed }: IHomeStatistic) {
         <Statistic.Value>
           <text>
             <text className={styles['statistic-small-text']}>NO.</text>
-            <text>{rank}</text>
+            <text>{ranking}</text>
           </text>
         </Statistic.Value>
       </Statistic>
@@ -147,11 +155,12 @@ function HomeStatistic({ compensatedCount, rank, speed }: IHomeStatistic) {
   );
 }
 
-interface IHomeRecord {
-  records?: any[];
-}
+/**
+ * Home Page DuckComponents
+ */
 
-function HomeRecord({ records }: IHomeRecord) {
+function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
+  const { runningRecord, runningRecordDisplayMode } = duck.selectors(store);
   return (
     <view className={styles.record}>
       <view className={styles['record-title']}>
@@ -159,29 +168,128 @@ function HomeRecord({ records }: IHomeRecord) {
         <Icon.GridMode />
       </view>
       <view className={styles['record-list']}>
-        <Panel.OutlineGreen className={styles['record-item']} width="347px" height="50px">
-          <view className={styles['record-item-left']}>
-            <text>🧪</text>
-            <text className={styles['record-item-date']}>2020-02-29</text>
-            <text className={styles['record-item-duration']}>{"8'20''"}</text>
-          </view>
-          <view className={styles['record-item-right']}>NO.123</view>
-        </Panel.OutlineGreen>
+        {runningRecord.map((runningRecordItem, key) => (
+          <Panel.OutlineGreen key={key} className={styles['record-item']} width="347px" height="50px">
+            <view className={styles['record-item-left']}>
+              <text>{runningRecordItem.mood}</text>
+              <text className={styles['record-item-date']}>{`${
+                runningRecordItem.year
+              }-${runningRecordItem.month.toString().padStart(2, '0')}-${runningRecordItem.day
+                .toString()
+                .padStart(2, '0')}`}
+              </text>
+              <text className={styles['record-item-duration']}>{runningRecordItem.speed}</text>
+            </view>
+            <view className={styles['record-item-right']}>
+              {runningRecordItem.ranking ? `NO.${runningRecordItem.ranking}` : '未完成'}
+            </view>
+          </Panel.OutlineGreen>
+        ))}
       </view>
     </view>
   );
 }
 
-/**
- * Home Page DuckComponents
- */
-
 function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
+  const { rankList, myRank } = duck.selectors(store);
   return (
     <view>
-      <view>
-        <text>今日排行榜</text>
+      <view className={styles['rank-title-container']}>
+        <text className={styles['rank-title']}>今日排行榜</text>
         <Icon.Question />
+      </view>
+      <view className={styles['rank-board-container']}>
+        <ScrollView>
+          {rankList?.length &&
+            rankList.map((rankItem, key) => (
+              <view key={key} className={styles['rank-board-item']}>
+                <view className={styles['rank-board-item-sub']}>
+                  <view className={styles['rank-board-item-ranking']}>{rankItem.ranking}</view>
+                  <view className={styles['rank-board-avatar-wrapper']}>
+                    <Avatar src={rankItem.avatarUri} size="40px" />
+                  </view>
+                  <view className={styles['rank-board-item-info']}>
+                    <view className={styles['rank-board-item-name']}>{rankItem.username}</view>
+                    <view className={styles['rank-board-item-duration']}>
+                      {rankItem.startTime}
+                      {'-'}
+                      {rankItem.endTime}
+                    </view>
+                  </view>
+                </view>
+                <view className={styles['rank-board-item-sub']}>
+                  <view className={styles['rank-board-item-speed']}>{rankItem.speed}</view>
+                  <view className={styles['rank-board-item-like']}>
+                    {rankItem.isLiked ? <Icon.CowRed /> : <Icon.CowGray />}
+                    <view>{rankItem.likeCount}</view>
+                  </view>
+                </view>
+              </view>
+            ))}
+        </ScrollView>
+      </view>
+      <view className={styles['rank-mine-wrapper']}>
+        <view className={styles['rank-mine-container']}>
+          <view className={styles['rank-mine-sub']}>
+            <view className={styles['rank-mine-ranking']}>{myRank.ranking}</view>
+            <view className={styles['rank-mine-avatar-wrapper']}>
+              <Avatar src={myRank.avatarUri} size="40px" />
+            </view>
+            <view className={styles['rank-mine-info']}>
+              <view className={styles['rank-mine-username']}>{myRank.username}</view>
+              <view className={styles['rank-mine-duration']}>
+                {myRank.startTime}
+                {'-'}
+                {myRank.endTime}
+              </view>
+            </view>
+          </view>
+          <view className={styles['rank-mine-sub']}>
+            <view className={styles['rank-mine-speed']}>{myRank.speed}</view>
+            <view className={styles['rank-mine-share-wrapper']}>
+              <Icon.ShareGreen />
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  );
+}
+
+function HomeHistoryRecordModal({ dispatch, store, duck }: DuckProps<HomeDuck>) {
+  const { historyRecord } = duck.selectors(store);
+  return (
+    <view>
+      <view className={styles['history-title']}>
+        <view>历史记录</view>
+      </view>
+      <view className={styles['history-list']}>
+        {historyRecord.map((item, key) => {
+          const innner = (
+            <>
+              <view className={styles['history-list-item-content']}>
+                <view>
+                  <view className={styles['history-list-item-annual']}>{item.annual}</view>
+                  <view className={styles['history-list-item-term']}>第{numToChineseCharacter(item.term)}学期</view>
+                </view>
+                <view className={styles['history-list-item-count-wrapper']}>
+                  <text className={styles['history-list-item-count']}>{item.count}</text>
+                  <text>次</text>
+                </view>
+              </view>
+            </>
+          );
+
+          return item.isPass ? (
+            <Panel.OutlineGreen key={key} className={styles['history-list-item']} height="54px" width="279px">
+              {innner}
+            </Panel.OutlineGreen>
+          ) : (
+            <Panel.OutlineGray key={key} className={styles['history-list-item']} height="54px" width="279px">
+              {innner}
+            </Panel.OutlineGray>
+          );
+        })}
       </view>
     </view>
   );

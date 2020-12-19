@@ -54,12 +54,9 @@ export abstract class Duck {
     return this._makeState(this.reducers);
   }
   private _makeReducer<TState extends object, TType = string>(state: TState, action: TType): TState {
-    return Object.entries(state)
+    return Object.entries(this.reducers)
       .map(([key, value]) => {
-        return [
-          key,
-          typeof value === 'object' ? this._makeReducer(value, action) : this.reducers?.[key]?.(value, action),
-        ];
+        return [key, (value as any)(state[key], action)];
       })
       .reduce((accumulate, current) => {
         const [key, value] = current;

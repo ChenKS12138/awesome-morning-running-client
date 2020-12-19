@@ -1,17 +1,30 @@
 import { Duck, createToPayload, reduceFromPayload } from '@/utils';
-import { RankItem } from '@/utils/interface';
+import { RankItem, HisotryTermRecordItem, RunningRecord } from '@/utils/interface';
 import { takeLatest, put, fork, all } from 'redux-saga/effects';
+import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
 
 export default class HomeDuck extends Duck {
   get quickTypes() {
     enum Types {
+      SET_TOTAL_RUNNING_COUNT,
+      SET_CURRENT_RUNNING_COUNT,
+      SET_COMPENSATORY_COUNT,
+      SET_RANKING,
+      SET_SPEED,
+
       SET_SHOW_RANK_LIST,
       SET_SHOW_HISTORY_RECORD,
+
       SET_RANK_LIST,
+      SET_MY_RANK,
+      SET_HISTORY_RECORD,
 
       SHOW_RANK_LIST,
       SHOW_HISTORY_RECORD,
       HIDE_MODAL,
+
+      SET_RUNNING_RECORD_DISPLAY_MODE,
+      SET_RUNNING_RECORD,
     }
     return {
       ...Types,
@@ -27,19 +40,117 @@ export default class HomeDuck extends Duck {
   get reducers() {
     const { types } = this;
     return {
+      totalRunningCount: reduceFromPayload<number>(types.SET_TOTAL_RUNNING_COUNT, 60),
+      currentRunningCount: reduceFromPayload<number>(types.SET_CURRENT_RUNNING_COUNT, 34),
+      compensatoryCount: reduceFromPayload<number>(types.SET_COMPENSATORY_COUNT, 10),
+      ranking: reduceFromPayload<number>(types.SET_RANKING, 123),
+      speed: reduceFromPayload<string>(types.SET_SPEED, "7'33''"),
+      showRankList: reduceFromPayload<boolean>(types.SET_SHOW_RANK_LIST, false),
+      showHistoryRecord: reduceFromPayload<boolean>(types.SET_SHOW_HISTORY_RECORD, false),
+      myRank: reduceFromPayload<RankItem>(types.SET_MY_RANK, {
+        avatarUri:
+          'https://avatars1.githubusercontent.com/u/42082890?s=460&u=576fffd9f1773ebf346c06afb3326b30ad21d0fd&v=4',
+        endTime: '06:10',
+        startTime: '06:00',
+        isLiked: true,
+        likeCount: 10,
+        speed: "7'33''",
+        username: 'cattchen',
+        ranking: 111,
+      }),
       rankList: reduceFromPayload<RankItem[]>(types.SET_RANK_LIST, [
         {
-          avatarUri: 'avatar.png',
+          avatarUri:
+            'https://avatars1.githubusercontent.com/u/42082890?s=460&u=576fffd9f1773ebf346c06afb3326b30ad21d0fd&v=4',
           endTime: '06:10',
           startTime: '06:00',
           isLiked: true,
           likeCount: 10,
           speed: "7'33''",
           username: 'cattchen',
+          ranking: 1,
         },
       ]),
-      showRankList: reduceFromPayload<boolean>(types.SET_SHOW_RANK_LIST, true),
-      showHistoryRecord: reduceFromPayload<boolean>(types.SET_SHOW_HISTORY_RECORD, false),
+      historyRecord: reduceFromPayload<HisotryTermRecordItem[]>(types.SET_HISTORY_RECORD, [
+        {
+          annual: '2017-2018',
+          term: 1,
+          count: 40,
+          isPass: true,
+        },
+        {
+          annual: '2017-2018',
+          term: 2,
+          count: 10,
+          isPass: false,
+        },
+        {
+          annual: '2018-2019',
+          term: 1,
+          count: 35,
+          isPass: true,
+        },
+        {
+          annual: '2018-2019',
+          term: 2,
+          count: 65,
+          isPass: true,
+        },
+      ]),
+      runningRecordDisplayMode: reduceFromPayload<RUNNING_RECORD_DISPLAY_MODAL>(
+        types.SET_RUNNING_RECORD_DISPLAY_MODE,
+        RUNNING_RECORD_DISPLAY_MODAL.GRID,
+      ),
+      runningRecord: reduceFromPayload<RunningRecord[]>(types.SET_RUNNING_RECORD, [
+        {
+          mood: '😂',
+          year: 2020,
+          month: 2,
+          day: 28,
+          ranking: 122,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 2,
+          day: 27,
+          ranking: 121,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 2,
+          day: 26,
+          ranking: 123,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 2,
+          day: 28,
+          ranking: 122,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 2,
+          day: 27,
+          ranking: 121,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 2,
+          day: 26,
+          ranking: 123,
+          speed: "8'20''",
+        },
+      ]),
     };
   }
   * saga() {

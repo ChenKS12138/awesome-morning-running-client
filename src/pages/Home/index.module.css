@@ -52,6 +52,7 @@
 }
 .record-list {
   margin-top: 14px;
+  padding-bottom: 14px;
 }
 
 .record-item {
@@ -62,6 +63,8 @@
   align-items: center;
   font-weight: 500;
   color: #353535;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 .record-item-left {
   font-size: 14px;
@@ -98,4 +101,196 @@
 
 .divider {
   margin-top: 14px;
+}
+
+/* home rank list */
+.rank-title-container {
+  display: flex;
+  align-items: center;
+  padding-top: 23px;
+  padding-left: 23px;
+}
+
+.rank-title {
+  font-weight: 500;
+  color: #353535;
+  font-size: 22px;
+  margin-right: 5px;
+}
+
+.rank-board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.rank-board-item {
+  width: 285px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.rank-board-item-sub {
+  display: flex;
+  align-items: center;
+}
+
+.rank-board-item-ranking {
+  font-family: 'DIN Condensed';
+  font-weight: 500;
+  font-size: 30px;
+  color: #353535;
+  margin-right: 10.5px;
+}
+
+.rank-board-avatar-wrapper {
+  margin-right: 7px;
+}
+
+.rank-board-item-info {
+  margin-right: 7px;
+}
+
+.rank-board-item-name {
+  font-weight: 500;
+  font-size: 16px;
+  color: #353535;
+}
+
+.rank-board-item-duration {
+  font-weight: 500;
+  font-size: 12px;
+  color: #9b9b9b;
+}
+
+.rank-board-item-speed {
+  font-family: 'DIN Condensed';
+  font-weight: 500;
+  font-size: 24px;
+  color: #353535;
+}
+
+.rank-board-item-like {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  color: #dcdfe6;
+  margin-left: 11px;
+}
+
+.rank-mine-wrapper {
+  background-color: #f1f1f1;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  height: 74px;
+}
+
+.rank-mine-container {
+  margin: 0 auto;
+  width: 285px;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rank-mine-sub {
+  display: flex;
+  align-items: center;
+}
+
+.rank-mine-ranking {
+  font-family: 'DIN Condensed';
+  font-size: 14px;
+  font-weight: 500;
+  color: #353535;
+  margin-right: 11px;
+}
+
+.rank-mine-avatar-wrapper {
+  margin-right: 7px;
+}
+
+.rank-mine-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.rank-mine-username {
+  font-weight: 500;
+  font-size: 16px;
+  color: #353535;
+}
+
+.rank-mine-duration {
+  font-size: 12px;
+  color: #9b9b9b;
+}
+
+.rank-mine-speed {
+  font-weight: 500;
+  font-size: 24px;
+  color: #353535;
+}
+
+.rank-mine-share-wrapper {
+  margin-left: 11px;
+  font-family: 'DIN Condensed';
+}
+
+/* home page history record */
+
+.history-title {
+  color: #353535;
+  font-weight: 500;
+  font-size: 22px;
+  margin-top: 23px;
+  margin-left: 23px;
+}
+
+.history-list {
+  margin-top: 11px;
+  margin-left: 23px;
+}
+
+.history-list-item {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-list-item-content {
+  display: flex;
+  align-items: flex-end;
+  width: 256px;
+  justify-content: space-between;
+}
+
+.history-list-item-annual {
+  font-weight: 500;
+  font-size: 14px;
+  color: #353535;
+}
+
+.history-list-item-term {
+  font-weight: 500;
+  font-size: 12px;
+  color: #353535;
+}
+
+.history-list-item-count-wrapper {
+  font-weight: 500;
+  font-size: 13px;
+  color: #353535;
+}
+
+.history-list-item-count {
+  font-size: 26px;
+  font-family: 'DIN Condensed';
 }

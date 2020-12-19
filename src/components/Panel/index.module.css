@@ -10,7 +10,7 @@
 }
 
 .outline-gray {
-  border-color: #fff;
-  border: #9b9b9b solid 2px;
+  border: 2px #e7e7e7 solid;
+  background-color: #ededed;
   border-radius: 8px;
 }

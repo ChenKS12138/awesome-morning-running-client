@@ -1,10 +1,9 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.tsserver.pluginPaths": ["typescript-plugin-css-modules"],
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     // For ESLint and StyleLint
     "source.fixAll": true
-  },
-  "prettier.eslintIntegration": true,
+  }
 }

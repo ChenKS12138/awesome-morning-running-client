@@ -1,5 +1,5 @@
 .modal {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -17,4 +17,5 @@
   border-radius: 9px;
   width: 324px;
   height: 588px;
+  overflow: hidden;
 }

@@ -5,7 +5,7 @@ export default Avatar;
 
 interface IAvatar {
   src: string;
-  size: number;
+  size: string;
 }
 
 function Avatar({ size, src }: IAvatar) {
