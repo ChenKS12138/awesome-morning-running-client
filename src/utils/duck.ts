@@ -7,7 +7,7 @@ import { useEffect, useReducer, useRef } from 'rax';
 import createSagaMiddleware from 'redux-saga';
 
 interface BASE_REDUCERS {
-  [key: string]: () => any;
+  [key: string]: (args?: any) => any;
 }
 
 type STATE_OF_REDUCERS<REDUCERS extends BASE_REDUCERS> = {
@@ -21,11 +21,15 @@ export interface DuckProps<T extends Duck> {
 }
 
 export abstract class Duck {
+  State: STATE_OF_REDUCERS<this['reducers']>;
   static INIT = '@duck/INIT';
   static END = '@duck/END';
   abstract get quickTypes();
   abstract get reducers();
   abstract get creators();
+  get rawSelectors(): { [key: string]: (key: any) => any } {
+    return {};
+  }
   get types(): {
     readonly [P in keyof this['quickTypes']]: string;
   } {
@@ -39,8 +43,17 @@ export abstract class Duck {
   }
   get selectors() {
     type Duck = this;
+    const duckSelf = this;
     return function (state: any) {
-      return state as STATE_OF_REDUCERS<Duck['reducers']>;
+      const newState = { ...state };
+      Object.entries(duckSelf.rawSelectors).forEach(([key, value]) => {
+        Object.defineProperty(newState, key, {
+          get() {
+            return value(newState);
+          },
+        });
+      });
+      return newState as STATE_OF_REDUCERS<Duck['reducers']> & STATE_OF_REDUCERS<Duck['rawSelectors']>;
     };
   }
   get reducer() {
@@ -98,9 +111,9 @@ export function createToPayload<TState, TType = string>(actionType: TType) {
   return function (
     payload: TState,
   ): {
-      type: TType;
-      payload: TState;
-    } {
+    type: TType;
+    payload: TState;
+  } {
     return {
       type: actionType,
       payload,
@@ -119,22 +132,40 @@ export function useDuckState<TDuck extends Duck>(
   const [state, dispatch] = useReducer(
     process.env.NODE_ENV === 'development'
       ? (currentState, action) => {
-        const next = duckRef.current.reducer(currentState, action);
-        console.groupCollapsed(
-          `%cAction: %c${action.type} %cat ${getCurrentTimeFormatted()}`,
-          'color: black; font-weight: bold;',
-          'color: bl; font-weight: bold;',
-          'color: grey; font-weight: lighter;',
-        );
-        console.log('%cPrevious State:', 'color: #9E9E9E; font-weight: 700;', currentState);
-        console.log('%cAction:', 'color: #00A7F7; font-weight: 700;', action);
-        console.log('%cNext State:', 'color: #47B04B; font-weight: 700;', next);
-        console.groupEnd();
-        return next;
-      }
+          const next = duckRef.current.reducer(currentState, action);
+          console.groupCollapsed(
+            `%cAction: %c${action.type} %cat ${getCurrentTimeFormatted()}`,
+            'color: black; font-weight: bold;',
+            'color: bl; font-weight: bold;',
+            'color: grey; font-weight: lighter;',
+          );
+          console.log('%cPrevious State:', 'color: #9E9E9E; font-weight: 700;', currentState);
+          console.log('%cAction:', 'color: #00A7F7; font-weight: 700;', action);
+          console.log('%cNext State:', 'color: #47B04B; font-weight: 700;', next);
+          console.groupEnd();
+          return next;
+        }
       : duckRef.current.reducer,
     duckRef.current.initialState,
   );
+  const storeRef = useRef(
+    (function () {
+      let _state = state;
+      return {
+        dispatch,
+        getState() {
+          return _state;
+        },
+        updateState(nextState) {
+          _state = nextState;
+        },
+      };
+    })(),
+  );
+
+  useEffect(() => {
+    storeRef.current.updateState(state);
+  }, [state, storeRef]);
 
   useEffect(() => {
     const task = sagaMiddlewareRef.current.run(duckRef.current.saga.bind(duckRef.current));
@@ -143,11 +174,13 @@ export function useDuckState<TDuck extends Duck>(
     };
   }, []);
 
+  storeRef.current.dispatch = dispatch;
+
   return {
     store: state,
     duck: duckRef.current,
     // TODO performance enhance required
-    dispatch: enhanceDispatch({ dispatch, getState: () => state }, sagaMiddlewareRef.current),
+    dispatch: enhanceDispatch(storeRef.current, sagaMiddlewareRef.current),
   };
 }
 

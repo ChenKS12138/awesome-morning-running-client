@@ -14,6 +14,7 @@ import { useDuckState, DuckProps, numToChineseCharacter } from '@/utils';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
+import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
 
 export default Home;
 
@@ -160,31 +161,65 @@ function HomeStatistic({ compensatoryCount, ranking, speed }: IHomeStatistic) {
  */
 
 function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
-  const { runningRecord, runningRecordDisplayMode } = duck.selectors(store);
+  const state = duck.selectors(store);
+  const handleDisplayModalClick = useCallback(() => {
+    dispatch({
+      type: duck.types.TOGGLE_DISPLAY_MODE,
+    });
+  }, []);
+
   return (
     <view className={styles.record}>
       <view className={styles['record-title']}>
         <text>跑操记录</text>
-        <Icon.GridMode />
+        <view onClick={handleDisplayModalClick}>
+          {state.runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.LIST ? <Icon.GridMode /> : <Icon.ListMode />}
+        </view>
       </view>
       <view className={styles['record-list']}>
-        {runningRecord.map((runningRecordItem, key) => (
-          <Panel.OutlineGreen key={key} className={styles['record-item']} width="347px" height="50px">
-            <view className={styles['record-item-left']}>
-              <text>{runningRecordItem.mood}</text>
-              <text className={styles['record-item-date']}>{`${
-                runningRecordItem.year
-              }-${runningRecordItem.month.toString().padStart(2, '0')}-${runningRecordItem.day
-                .toString()
-                .padStart(2, '0')}`}
-              </text>
-              <text className={styles['record-item-duration']}>{runningRecordItem.speed}</text>
-            </view>
-            <view className={styles['record-item-right']}>
-              {runningRecordItem.ranking ? `NO.${runningRecordItem.ranking}` : '未完成'}
-            </view>
-          </Panel.OutlineGreen>
-        ))}
+        {state.runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.LIST ? (
+          state.runningRecord.map((runningRecordItem, key) => (
+            <Panel.OutlineGreen key={key} className={styles['record-item']} width="347px" height="50px">
+              <view className={styles['record-item-left']}>
+                <text>{runningRecordItem.mood}</text>
+                <text className={styles['record-item-date']}>
+                  {`${runningRecordItem.year}-${runningRecordItem.month
+                    .toString()
+                    .padStart(2, '0')}-${runningRecordItem.day.toString().padStart(2, '0')}`}
+                </text>
+                <text className={styles['record-item-duration']}>{runningRecordItem.speed}</text>
+              </view>
+              <view className={styles['record-item-right']}>
+                {runningRecordItem.ranking ? `NO.${runningRecordItem.ranking}` : '未完成'}
+              </view>
+            </Panel.OutlineGreen>
+          ))
+        ) : (
+          <view>
+            {state.distributedRunningRecords.map((item, key) => (
+              <view className={styles['record-gird-group']} key={key}>
+                <view className={styles['record-grid-group-title']}>{item.month}月</view>
+                <view className={styles['record-grid']}>
+                  {item.records.map((record, recordKey) => {
+                    const inner = (
+                      <view className={styles['record-grid-group-item']}>
+                        <view className={styles['record-grid-group-item-day']}>03</view>
+                        <view className={styles['record-grid-group-item-mood']}>😂</view>
+                        <view className={styles['record-grid-group-item-speed']}>{"8'20''"}</view>
+                        <view className={styles['record-grid-group-item-ranking']}>NO.123</view>
+                      </view>
+                    );
+                    return (
+                      <Panel.OutlineGreen key={String(key) + String(recordKey)} width="63px" height="75px">
+                        {inner}
+                      </Panel.OutlineGreen>
+                    );
+                  })}
+                </view>
+              </view>
+            ))}
+          </view>
+        )}
       </view>
     </view>
   );

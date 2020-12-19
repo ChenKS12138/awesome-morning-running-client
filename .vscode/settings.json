@@ -3,7 +3,8 @@
   "typescript.tsserver.pluginPaths": ["typescript-plugin-css-modules"],
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    // For ESLint and StyleLint
     "source.fixAll": true
-  }
+  },
+  "eslint.enable": true,
+  "prettier.enable": true
 }

@@ -1,6 +1,6 @@
-import { Duck, createToPayload, reduceFromPayload } from '@/utils';
+import { Duck, createToPayload, reduceFromPayload, distributeRunningRecord } from '@/utils';
 import { RankItem, HisotryTermRecordItem, RunningRecord } from '@/utils/interface';
-import { takeLatest, put, fork, all } from 'redux-saga/effects';
+import { takeLatest, put, fork, all, select } from 'redux-saga/effects';
 import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
 
 export default class HomeDuck extends Duck {
@@ -25,6 +25,8 @@ export default class HomeDuck extends Duck {
 
       SET_RUNNING_RECORD_DISPLAY_MODE,
       SET_RUNNING_RECORD,
+
+      TOGGLE_DISPLAY_MODE,
     }
     return {
       ...Types,
@@ -153,27 +155,49 @@ export default class HomeDuck extends Duck {
       ]),
     };
   }
-  * saga() {
+  get rawSelectors() {
+    type State = this['State'];
+    return {
+      distributedRunningRecords(state: State) {
+        return distributeRunningRecord(state.runningRecord);
+      },
+    };
+  }
+  *saga() {
     yield fork([this, this.watchToShowRankList]);
     yield fork([this, this.watchToShowHistoryRecord]);
     yield fork([this, this.watchToHideModal]);
+    yield fork([this, this.watchToToggleRecordDisplayMode]);
   }
-  * watchToShowRankList() {
+  *watchToShowRankList() {
     const { types, creators } = this;
     yield takeLatest([types.SHOW_RANK_LIST], function* () {
       yield put(creators.setShowRankList(true));
     });
   }
-  * watchToShowHistoryRecord() {
+  *watchToShowHistoryRecord() {
     const { types, creators } = this;
     yield takeLatest([types.SHOW_HISTORY_RECORD], function* () {
       yield put(creators.setShowHistoryRecord(true));
     });
   }
-  * watchToHideModal() {
+  *watchToHideModal() {
     const { types, creators } = this;
     yield takeLatest([types.HIDE_MODAL], function* () {
       yield all([put(creators.setShowHistoryRecord(false)), put(creators.setShowRankList(false))]);
+    });
+  }
+  *watchToToggleRecordDisplayMode() {
+    const { types, selectors } = this;
+    yield takeLatest([types.TOGGLE_DISPLAY_MODE], function* () {
+      const { runningRecordDisplayMode } = selectors(yield select());
+      yield put({
+        type: types.SET_RUNNING_RECORD_DISPLAY_MODE,
+        payload:
+          runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.GRID
+            ? RUNNING_RECORD_DISPLAY_MODAL.LIST
+            : RUNNING_RECORD_DISPLAY_MODAL.GRID,
+      });
     });
   }
 }
