@@ -4,6 +4,7 @@
 export { default as RaxView } from 'rax-view';
 export { default as RaxText } from 'rax-text';
 export { default as RaxImage } from 'rax-image';
+export { default as RaxScrollView } from 'rax-scrollview';
 
 /**
  * custom components for wechat-miniprogram

@@ -6,9 +6,9 @@
 import { useEffect, useReducer, useRef } from 'rax';
 import createSagaMiddleware from 'redux-saga';
 
-type BASE_REDUCERS = {
+interface BASE_REDUCERS {
   [key: string]: () => any;
-};
+}
 
 type STATE_OF_REDUCERS<REDUCERS extends BASE_REDUCERS> = {
   [key in keyof REDUCERS]: ReturnType<REDUCERS[key]>;
@@ -101,9 +101,9 @@ export function createToPayload<TState, TType = string>(actionType: TType) {
   return function (
     payload: TState,
   ): {
-    type: TType;
-    payload: TState;
-  } {
+      type: TType;
+      payload: TState;
+    } {
     return {
       type: actionType,
       payload,
@@ -115,33 +115,33 @@ export function createToPayload<TState, TType = string>(actionType: TType) {
  * @param Duck
  */
 export function useDuckState<TDuck extends Duck>(
-  Duck: new () => TDuck,
+  MyDuck: new () => TDuck,
 ): { store: any; dispatch: (action: any) => void; duck: TDuck } {
-  const duckRef = useRef(new Duck());
+  const duckRef = useRef(new MyDuck());
   const sagaMiddlewareRef = useRef(createSagaMiddleware());
   const [state, dispatch] = useReducer(
     process.env.NODE_ENV === 'development'
-      ? (state, action) => {
-          const next = duckRef.current.reducer(state, action);
-          console.groupCollapsed(
-            `%cAction: %c${action.type} %cat ${getCurrentTimeFormatted()}`,
-            'color: black; font-weight: bold;',
-            'color: bl; font-weight: bold;',
-            'color: grey; font-weight: lighter;',
-          );
-          console.log('%cPrevious State:', 'color: #9E9E9E; font-weight: 700;', state);
-          console.log('%cAction:', 'color: #00A7F7; font-weight: 700;', action);
-          console.log('%cNext State:', 'color: #47B04B; font-weight: 700;', next);
-          console.groupEnd();
-          return next;
-        }
+      ? (currentState, action) => {
+        const next = duckRef.current.reducer(currentState, action);
+        console.groupCollapsed(
+          `%cAction: %c${action.type} %cat ${getCurrentTimeFormatted()}`,
+          'color: black; font-weight: bold;',
+          'color: bl; font-weight: bold;',
+          'color: grey; font-weight: lighter;',
+        );
+        console.log('%cPrevious State:', 'color: #9E9E9E; font-weight: 700;', currentState);
+        console.log('%cAction:', 'color: #00A7F7; font-weight: 700;', action);
+        console.log('%cNext State:', 'color: #47B04B; font-weight: 700;', next);
+        console.groupEnd();
+        return next;
+      }
       : duckRef.current.reducer,
     duckRef.current.initialState,
   );
 
   useEffect(() => {
     const task = sagaMiddlewareRef.current.run(duckRef.current.saga.bind(duckRef.current));
-    () => {
+    return () => {
       task.cancel();
     };
   }, []);
@@ -149,6 +149,7 @@ export function useDuckState<TDuck extends Duck>(
   return {
     store: state,
     duck: duckRef.current,
+    // TODO performance enhance required
     dispatch: enhanceDispatch({ dispatch, getState: () => state }, sagaMiddlewareRef.current),
   };
 }

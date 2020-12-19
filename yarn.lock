@@ -874,14 +874,7 @@
     "@babel/helper-annotate-as-pure" "^7.10.4"
     "@babel/helper-plugin-utils" "^7.10.4"
 
-"@babel/plugin-transform-regenerator@^7.0.0":
-  version "7.12.1"
-  resolved "https://registry.npm.taobao.org/@babel/plugin-transform-regenerator/download/@babel/plugin-transform-regenerator-7.12.1.tgz#5f0a28d842f6462281f06a964e88ba8d7ab49753"
-  integrity sha1-Xwoo2EL2RiKB8GqWToi6jXq0l1M=
-  dependencies:
-    regenerator-transform "^0.14.2"
-
-"@babel/plugin-transform-regenerator@^7.12.1":
+"@babel/plugin-transform-regenerator@^7.0.0", "@babel/plugin-transform-regenerator@^7.12.1":
   version "7.12.1"
   resolved "https://registry.npmjs.org/@babel/plugin-transform-regenerator/-/plugin-transform-regenerator-7.12.1.tgz#5f0a28d842f6462281f06a964e88ba8d7ab49753"
   integrity sha512-gYrHqs5itw6i4PflFX3OdBPMQdPbF4bj2REIUxlMRUFk0/ZOAIpDFuViuxPjUL7YC8UPnf+XG7/utJvqXdPKng==
@@ -4837,6 +4830,13 @@ eslint-plugin-import@^2.22.1:
     resolve "^1.17.0"
     tsconfig-paths "^3.9.0"
 
+eslint-plugin-prettier@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.npmjs.org/eslint-plugin-prettier/-/eslint-plugin-prettier-3.3.0.tgz#61e295349a65688ffac0b7808ef0a8244bdd8d40"
+  integrity sha512-tMTwO8iUWlSRZIwS9k7/E4vrTsfvsrcM5p1eftyuqWH25nKsz/o6/54I7jwQ/3zobISyC7wMy9ZsFwgTxOcOpQ==
+  dependencies:
+    prettier-linter-helpers "^1.0.0"
+
 eslint-plugin-react-hooks@^4.2.0:
   version "4.2.0"
   resolved "https://registry.npm.taobao.org/eslint-plugin-react-hooks/download/eslint-plugin-react-hooks-4.2.0.tgz#8c229c268d468956334c943bb45fc860280f5556"
@@ -5195,6 +5195,11 @@ fast-deep-equal@^3.1.1:
   version "3.1.3"
   resolved "https://registry.npm.taobao.org/fast-deep-equal/download/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
   integrity sha1-On1WtVnWy8PrUSMlJE5hmmXGxSU=
+
+fast-diff@^1.1.2:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/fast-diff/-/fast-diff-1.2.0.tgz#73ee11982d86caaf7959828d519cfe927fac5f03"
+  integrity sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==
 
 fast-glob@^2.0.2, fast-glob@^2.2.6:
   version "2.2.7"
@@ -9961,6 +9966,13 @@ prepend-http@^1.0.0:
   resolved "https://registry.npm.taobao.org/prepend-http/download/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
   integrity sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=
 
+prettier-linter-helpers@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/prettier-linter-helpers/-/prettier-linter-helpers-1.0.0.tgz#d23d41fe1375646de2d0104d3454a3008802cf7b"
+  integrity sha512-GbK2cP9nraSSUF9N2XwUwqfzlAFlMNYYl+ShE/V+H8a9uNl/oUqB1w2EL54Jh0OlyRSd8RfWYJ3coVS4TROP2w==
+  dependencies:
+    fast-diff "^1.1.2"
+
 prettier@^2.0.2, prettier@^2.1.2:
   version "2.2.1"
   resolved "https://registry.npm.taobao.org/prettier/download/prettier-2.2.1.tgz?cache=0&sync_timestamp=1606521128035&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fprettier%2Fdownload%2Fprettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
@@ -10367,6 +10379,14 @@ rax-document@^0.1.0:
   resolved "https://registry.npm.taobao.org/rax-document/download/rax-document-0.1.3.tgz#c87078a3b446e263e4bcd6f2364cdb1a0485909d"
   integrity sha1-yHB4o7RG4mPkvNbyNkzbGgSFkJ0=
 
+rax-get-element-by-id@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/rax-get-element-by-id/-/rax-get-element-by-id-1.0.0.tgz#0271e588c28eb5d592723eb04336bbab4adbc536"
+  integrity sha512-gL2HFrmBesQhRY8ogOeCvZpP5r+y22j7PGn+ubq+NuSVLzdPkGgN0Qd9zn5+6N8JVNGQrkGDhsu48ZH3ApAN+g==
+  dependencies:
+    rax "^1.0.0"
+    universal-env "^1.0.0"
+
 rax-image@^2.0.0:
   version "2.2.3"
   resolved "https://registry.npm.taobao.org/rax-image/download/rax-image-2.2.3.tgz#8a0ef22f8aed096bfe8217874ac98bb31320e81e"
@@ -10454,6 +10474,25 @@ rax-redux@^1.0.0:
   dependencies:
     invariant "^2.2.4"
 
+rax-refreshcontrol@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/rax-refreshcontrol/-/rax-refreshcontrol-1.0.1.tgz#28cda117b529e7cc8aa22e38f0312155d08dce78"
+  integrity sha512-bUbh6XGdAl/W9aP7K6NqUBTHKmMJEEMmkWjuwdEf0vncN5RyuvicuUBgfg1XK17DIXT0KB4ZLmuVscmmsnPJYw==
+  dependencies:
+    universal-env "^3.0.0"
+
+rax-scrollview@^3.3.4:
+  version "3.3.4"
+  resolved "https://registry.npmjs.org/rax-scrollview/-/rax-scrollview-3.3.4.tgz#c49e4813f8753d4b1895148c1be29db5b3968b14"
+  integrity sha512-+mGkqX6ds9xqX+UYu/Wcci2R8tEeRQwUSX4YZPsL/u3mwqZDxkBP0rDNynEzNYVoazc6ZzBaJ9cpdG7KAwX0ZA==
+  dependencies:
+    classnames "^2.2.6"
+    rax-get-element-by-id "^1.0.0"
+    rax-refreshcontrol "^1.0.0"
+    rax-text "^2.0.0"
+    rax-view "^2.0.0"
+    universal-env "^3.0.0"
+
 rax-server-renderer@^1.2.0:
   version "1.2.1"
   resolved "https://registry.npm.taobao.org/rax-server-renderer/download/rax-server-renderer-1.2.1.tgz#e37ca691132c0316e29478d243c17a865ca4d49f"
@@ -10522,7 +10561,7 @@ rax-webpack-config@^1.0.0:
     webpack-node-externals "^1.7.2"
     webpack-sources "^1.4.3"
 
-rax@^1.1.0:
+rax@^1.0.0, rax@^1.1.0:
   version "1.1.4"
   resolved "https://registry.npm.taobao.org/rax/download/rax-1.1.4.tgz#be71780930b3d1b15850df1c2ddf6437bddb9f05"
   integrity sha1-vnF4CTCz0bFYUN8cLd9kN73bnwU=
@@ -12589,6 +12628,11 @@ unist-util-stringify-position@^2.0.0:
   integrity sha1-zOO/oc34W6c3XR1bF73Eytqb2do=
   dependencies:
     "@types/unist" "^2.0.2"
+
+universal-env@^1.0.0:
+  version "1.0.7"
+  resolved "https://registry.npmjs.org/universal-env/-/universal-env-1.0.7.tgz#31a1f9d3328677bd1fc016c141353ca35766a456"
+  integrity sha512-N7n9nZSpVSKwjPDO0QsN+3/5pPPum9u5i7Km3xxUi0ykA8UD9nKt8foMYdVFB8HIRXx/Sh7HVu3pC5CJX/t9Tw==
 
 universal-env@^2.0.0:
   version "2.0.0"

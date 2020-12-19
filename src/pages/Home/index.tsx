@@ -1,6 +1,15 @@
 import { createElement, useCallback, useMemo } from 'rax';
-import { RaxView as View, Dial, Icon, Statistic, Divider, Panel, Modal } from '@/components';
-import { useDuckState } from '@/utils';
+import {
+  RaxView as View,
+  RaxScrollView as ScrollView,
+  Dial,
+  Icon,
+  Statistic,
+  Divider,
+  Panel,
+  Modal,
+} from '@/components';
+import { useDuckState, DuckProps } from '@/utils';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
@@ -13,11 +22,11 @@ export default Home;
 
 function Home() {
   const { duck, store, dispatch } = useDuckState(HomeDuck);
-  const { showHistoryRecord, showRankingList } = duck.selectors(store);
+  const { showHistoryRecord, showRankList } = duck.selectors(store);
 
   const handleModalMaskClick = useCallback(() => {
     dispatch({ type: duck.types.HIDE_MODAL });
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -29,7 +38,7 @@ function Home() {
             <view
               className={styles['panel-text']}
               onClick={() => {
-                dispatch({ type: duck.types.SHOW_RANKING_LIST });
+                dispatch({ type: duck.types.SHOW_RANK_LIST });
               }}
             >
               今日排行榜
@@ -49,7 +58,7 @@ function Home() {
         <Divider className={styles.divider} />
         <HomeRecord />
       </View>
-      <Modal x-if={showRankingList} onClickMask={handleModalMaskClick}>
+      <Modal x-if={showRankList} onClickMask={handleModalMaskClick}>
         <view>排行榜</view>
       </Modal>
       <Modal x-if={showHistoryRecord} onClickMask={handleModalMaskClick}>
@@ -154,7 +163,7 @@ function HomeRecord({ records }: IHomeRecord) {
           <view className={styles['record-item-left']}>
             <text>🧪</text>
             <text className={styles['record-item-date']}>2020-02-29</text>
-            <text className={styles['record-item-duration']}>8'20''</text>
+            <text className={styles['record-item-duration']}>{"8'20''"}</text>
           </view>
           <view className={styles['record-item-right']}>NO.123</view>
         </Panel.OutlineGreen>
@@ -163,4 +172,17 @@ function HomeRecord({ records }: IHomeRecord) {
   );
 }
 
-function HomeRankingListModal() {}
+/**
+ * Home Page DuckComponents
+ */
+
+function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
+  return (
+    <view>
+      <view>
+        <text>今日排行榜</text>
+        <Icon.Question />
+      </view>
+    </view>
+  );
+}
