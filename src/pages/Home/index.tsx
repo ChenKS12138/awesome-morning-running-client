@@ -162,3 +162,5 @@ function HomeRecord({ records }: IHomeRecord) {
     </view>
   );
 }
+
+function HomeRankingListModal() {}

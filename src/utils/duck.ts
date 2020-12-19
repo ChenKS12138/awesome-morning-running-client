@@ -14,6 +14,12 @@ type STATE_OF_REDUCERS<REDUCERS extends BASE_REDUCERS> = {
   [key in keyof REDUCERS]: ReturnType<REDUCERS[key]>;
 };
 
+export interface DuckProps<T extends Duck> {
+  store: any;
+  dispatch: (args: any) => void;
+  duck: T;
+}
+
 export abstract class Duck {
   static INIT = '@duck/INIT';
   static END = '@duck/END';
@@ -134,7 +140,10 @@ export function useDuckState<TDuck extends Duck>(
   );
 
   useEffect(() => {
-    sagaMiddlewareRef.current.run(duckRef.current.saga.bind(duckRef.current));
+    const task = sagaMiddlewareRef.current.run(duckRef.current.saga.bind(duckRef.current));
+    () => {
+      task.cancel();
+    };
   }, []);
 
   return {
