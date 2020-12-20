@@ -11,21 +11,17 @@ export default class HomeDuck extends Duck {
       SET_COMPENSATORY_COUNT,
       SET_RANKING,
       SET_SPEED,
-
       SET_SHOW_RANK_LIST,
       SET_SHOW_HISTORY_RECORD,
-
       SET_RANK_LIST,
       SET_MY_RANK,
       SET_HISTORY_RECORD,
+      SET_RUNNING_RECORD_DISPLAY_MODE,
+      SET_RUNNING_RECORD,
 
       SHOW_RANK_LIST,
       SHOW_HISTORY_RECORD,
       HIDE_MODAL,
-
-      SET_RUNNING_RECORD_DISPLAY_MODE,
-      SET_RUNNING_RECORD,
-
       TOGGLE_DISPLAY_MODE,
     }
     return {
@@ -132,7 +128,7 @@ export default class HomeDuck extends Duck {
           mood: '😂',
           year: 2020,
           month: 2,
-          day: 28,
+          day: 25,
           ranking: 122,
           speed: "8'20''",
         },
@@ -140,7 +136,7 @@ export default class HomeDuck extends Duck {
           mood: '😂',
           year: 2020,
           month: 2,
-          day: 27,
+          day: 24,
           ranking: 121,
           speed: "8'20''",
         },
@@ -148,6 +144,30 @@ export default class HomeDuck extends Duck {
           mood: '😂',
           year: 2020,
           month: 2,
+          day: 23,
+          ranking: 123,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 1,
+          day: 28,
+          ranking: 122,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 1,
+          day: 27,
+          ranking: null,
+          speed: "8'20''",
+        },
+        {
+          mood: '😂',
+          year: 2020,
+          month: 1,
           day: 26,
           ranking: 123,
           speed: "8'20''",

@@ -3,9 +3,16 @@ import { createElement } from 'rax';
 import styles from './index.module.css';
 
 export default {
-  SolidGray: PanelSolidGray,
-  OutlineGreen: PanelOutlineGreen,
-  OutlineGray: PanelOutlineGray,
+  SolidGray: {
+    Zero: PanelSolidGray0,
+  },
+  OutlineGreen: {
+    Zero: PanelOutlineGreen0,
+  },
+  OutlineGray: {
+    Zero: PanelOutlineGray0,
+    One: PanelOutlineGray1,
+  },
 };
 
 interface IPanel {
@@ -15,25 +22,33 @@ interface IPanel {
   className?: string;
 }
 
-function PanelSolidGray({ children, height, width, className }: IPanel) {
+function PanelSolidGray0({ children, height, width, className }: IPanel) {
   return (
-    <view className={composeClassnames(styles['solid-gray'], className)} style={{ height, width }}>
+    <view className={composeClassnames(styles['solid-gray-0'], className)} style={{ height, width }}>
       {children}
     </view>
   );
 }
 
-function PanelOutlineGreen({ children, height, width, className }: IPanel) {
+function PanelOutlineGreen0({ children, height, width, className }: IPanel) {
   return (
-    <view className={composeClassnames(styles['outline-green'], className)} style={{ height, width }}>
+    <view className={composeClassnames(styles['outline-green-0'], className)} style={{ height, width }}>
       {children}
     </view>
   );
 }
 
-function PanelOutlineGray({ children, height, width, className }: IPanel) {
+function PanelOutlineGray0({ children, height, width, className }: IPanel) {
   return (
-    <view className={composeClassnames(styles['outline-gray'], className)} style={{ height, width }}>
+    <view className={composeClassnames(styles['outline-gray-0'], className)} style={{ height, width }}>
+      {children}
+    </view>
+  );
+}
+
+function PanelOutlineGray1({ children, height, width, className }: IPanel) {
+  return (
+    <view className={composeClassnames(styles['outline-gray-1'], className)} style={{ height, width }}>
       {children}
     </view>
   );

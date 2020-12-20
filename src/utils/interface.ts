@@ -5,7 +5,8 @@ export interface RunningRecord {
   year: number;
   month: number;
   day: number;
-  ranking: number | null; // ranking为null表示未完成
+  /** ranking为null表示未完成 */
+  ranking: number | null;
   speed: string;
   mood: string;
 }

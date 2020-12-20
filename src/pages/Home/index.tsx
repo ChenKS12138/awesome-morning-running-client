@@ -10,7 +10,7 @@ import {
   Modal,
   Avatar,
 } from '@/components';
-import { useDuckState, DuckProps, numToChineseCharacter } from '@/utils';
+import { useDuckState, DuckProps, numToChineseCharacter, composeClassnames } from '@/utils';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
@@ -53,16 +53,16 @@ function Home() {
         <HomeDial total={totalRunningCount} current={currentRunningCount} goal={'跑操目标'} />
         <HomeStatistic compensatoryCount={compensatoryCount} ranking={ranking} speed={speed} />
         <view className={styles.panels}>
-          <Panel.SolidGray width="146px" height="45px">
+          <Panel.SolidGray.Zero width="146px" height="45px">
             <view className={styles['panel-text']} onClick={handleShowRankList}>
               今日排行榜
             </view>
-          </Panel.SolidGray>
-          <Panel.SolidGray width="146px" height="45px">
+          </Panel.SolidGray.Zero>
+          <Panel.SolidGray.Zero width="146px" height="45px">
             <view className={styles['panel-text']} onClick={handleShowHistoryRecord}>
               历史跑操记录
             </view>
-          </Panel.SolidGray>
+          </Panel.SolidGray.Zero>
         </view>
         <Divider className={styles.divider} />
         <HomeRecord dispatch={dispatch} store={store} duck={duck} />
@@ -178,22 +178,33 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
       </view>
       <view className={styles['record-list']}>
         {state.runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.LIST ? (
-          state.runningRecord.map((runningRecordItem, key) => (
-            <Panel.OutlineGreen key={key} className={styles['record-item']} width="347px" height="50px">
-              <view className={styles['record-item-left']}>
-                <text>{runningRecordItem.mood}</text>
-                <text className={styles['record-item-date']}>
-                  {`${runningRecordItem.year}-${runningRecordItem.month
-                    .toString()
-                    .padStart(2, '0')}-${runningRecordItem.day.toString().padStart(2, '0')}`}
-                </text>
-                <text className={styles['record-item-duration']}>{runningRecordItem.speed}</text>
-              </view>
-              <view className={styles['record-item-right']}>
-                {runningRecordItem.ranking ? `NO.${runningRecordItem.ranking}` : '未完成'}
-              </view>
-            </Panel.OutlineGreen>
-          ))
+          state.runningRecord.map((runningRecordItem, key) => {
+            const inner = (
+              <>
+                <view className={styles['record-item-left']}>
+                  <text>{runningRecordItem.mood}</text>
+                  <text className={styles['record-item-date']}>
+                    {`${runningRecordItem.year}-${runningRecordItem.month
+                      .toString()
+                      .padStart(2, '0')}-${runningRecordItem.day.toString().padStart(2, '0')}`}
+                  </text>
+                  <text className={styles['record-item-duration']}>{runningRecordItem.speed}</text>
+                </view>
+                <view className={styles['record-item-right']}>
+                  {runningRecordItem.ranking && `NO.${runningRecordItem.ranking}`}
+                </view>
+              </>
+            );
+            return runningRecordItem.ranking ? (
+              <Panel.OutlineGreen.Zero key={key} className={styles['record-item']} width="347px" height="50px">
+                {inner}
+              </Panel.OutlineGreen.Zero>
+            ) : (
+              <Panel.OutlineGray.One key={key} className={styles['record-item']} width="347px" height="50px">
+                {inner}
+              </Panel.OutlineGray.One>
+            );
+          })
         ) : (
           <view>
             {state.distributedRunningRecords.map((item, key) => (
@@ -201,18 +212,28 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
                 <view className={styles['record-grid-group-title']}>{item.month}月</view>
                 <view className={styles['record-grid']}>
                   {item.records.map((record, recordKey) => {
-                    const inner = (
-                      <view className={styles['record-grid-group-item']}>
-                        <view className={styles['record-grid-group-item-day']}>03</view>
-                        <view className={styles['record-grid-group-item-mood']}>😂</view>
-                        <view className={styles['record-grid-group-item-speed']}>{"8'20''"}</view>
-                        <view className={styles['record-grid-group-item-ranking']}>NO.123</view>
-                      </view>
-                    );
-                    return (
-                      <Panel.OutlineGreen key={String(key) + String(recordKey)} width="63px" height="75px">
-                        {inner}
-                      </Panel.OutlineGreen>
+                    return record.ranking !== null ? (
+                      <Panel.OutlineGreen.Zero key={String(key) + String(recordKey)} width="63px" height="75px">
+                        <view className={styles['record-grid-group-item']}>
+                          <view className={styles['record-grid-group-item-day']}>{record.day}</view>
+                          <view className={styles['record-grid-group-item-mood']}>{record.mood}</view>
+                          <view className={styles['record-grid-group-item-speed']}>{record.speed}</view>
+                          <view className={styles['record-grid-group-item-ranking']}>NO.{record.ranking}</view>
+                        </view>
+                      </Panel.OutlineGreen.Zero>
+                    ) : (
+                      <Panel.OutlineGray.One key={String(key) + String(recordKey)} width="63px" height="75px">
+                        <view className={styles['record-grid-group-item']}>
+                          <view
+                            className={composeClassnames(
+                              styles['record-grid-group-item-day'],
+                              styles['record-grid-group-item-day--umcomplete'],
+                            )}
+                          >
+                            {record.day}
+                          </view>
+                        </view>
+                      </Panel.OutlineGray.One>
                     );
                   })}
                 </view>
@@ -316,13 +337,13 @@ function HomeHistoryRecordModal({ dispatch, store, duck }: DuckProps<HomeDuck>) 
           );
 
           return item.isPass ? (
-            <Panel.OutlineGreen key={key} className={styles['history-list-item']} height="54px" width="279px">
+            <Panel.OutlineGreen.Zero key={key} className={styles['history-list-item']} height="54px" width="279px">
               {innner}
-            </Panel.OutlineGreen>
+            </Panel.OutlineGreen.Zero>
           ) : (
-            <Panel.OutlineGray key={key} className={styles['history-list-item']} height="54px" width="279px">
+            <Panel.OutlineGray.Zero key={key} className={styles['history-list-item']} height="54px" width="279px">
               {innner}
-            </Panel.OutlineGray>
+            </Panel.OutlineGray.Zero>
           );
         })}
       </view>

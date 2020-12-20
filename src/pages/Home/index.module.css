@@ -111,6 +111,7 @@
   right: 4px;
   font-size: 20px;
   font-weight: 500;
+  color: #417505;
 }
 
 .record-grid-group-item-mood {
@@ -135,6 +136,10 @@
   font-size: 18px;
   font-weight: 500;
   color: #353535;
+}
+
+.record-grid-group-item-day--umcomplete {
+  color: #9b9b9b;
 }
 
 /* home */

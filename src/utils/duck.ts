@@ -3,7 +3,7 @@
  * inspired from saga-duck
  * @see  https://github.com/cyrilluce/saga-duck
  */
-import { useEffect, useReducer, useRef } from 'rax';
+import { useEffect, useMemo, useReducer, useRef } from 'rax';
 import createSagaMiddleware from 'redux-saga';
 
 interface BASE_REDUCERS {
@@ -176,11 +176,15 @@ export function useDuckState<TDuck extends Duck>(
 
   storeRef.current.dispatch = dispatch;
 
+  const enhancedDispatch = useMemo(() => enhanceDispatch(storeRef.current, sagaMiddlewareRef.current), [
+    storeRef,
+    sagaMiddlewareRef,
+  ]);
+
   return {
     store: state,
     duck: duckRef.current,
-    // TODO performance enhance required
-    dispatch: enhanceDispatch(storeRef.current, sagaMiddlewareRef.current),
+    dispatch: enhancedDispatch,
   };
 }
 
