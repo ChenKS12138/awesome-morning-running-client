@@ -5,7 +5,7 @@ import { FONT_DIN_CONDENSED } from '@/assets';
 const appConfig = {
   onLaunch() {
     if (isWeChatMiniProgram) {
-      (wx as any).loadFontFace({
+      wx.loadFontFace({
         family: 'DIN Condensed',
         source: `url('${FONT_DIN_CONDENSED}')`,
       });

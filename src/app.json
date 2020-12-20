@@ -4,6 +4,11 @@
       "path": "/",
       "source": "pages/Home/index",
       "navigationBarTitleText": "晨跑"
+    },
+    {
+      "path": "/exercise",
+      "source": "pages/Exercise/index",
+      "navigationBarTitleText": "晨跑"
     }
   ],
   "window": {

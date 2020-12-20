@@ -1,7 +1,5 @@
 import { RunningRecord } from './interface';
 
-export * from './duck';
-
 /**
  * @param {string[]} classnames
  * @returns {string}

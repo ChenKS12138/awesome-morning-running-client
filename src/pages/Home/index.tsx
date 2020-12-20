@@ -10,7 +10,8 @@ import {
   Modal,
   Avatar,
 } from '@/components';
-import { useDuckState, DuckProps, numToChineseCharacter, composeClassnames } from '@/utils';
+import { numToChineseCharacter, composeClassnames } from '@/utils';
+import { useDuckState, DuckProps } from '@/utils/duck';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';

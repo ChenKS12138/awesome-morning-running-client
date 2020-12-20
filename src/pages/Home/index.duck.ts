@@ -1,4 +1,5 @@
-import { Duck, createToPayload, reduceFromPayload, distributeRunningRecord } from '@/utils';
+import { Duck, createToPayload, reduceFromPayload } from '@/utils/duck';
+import { distributeRunningRecord } from '@/utils';
 import { RankItem, HisotryTermRecordItem, RunningRecord } from '@/utils/interface';
 import { takeLatest, put, fork, all, select } from 'redux-saga/effects';
 import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
