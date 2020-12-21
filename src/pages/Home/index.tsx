@@ -1,4 +1,4 @@
-import { createElement, useCallback, useMemo } from 'rax';
+import { createElement, useCallback, useEffect, useMemo } from 'rax';
 import {
   RaxView as View,
   RaxScrollView as ScrollView,
@@ -24,7 +24,7 @@ export default Home;
  */
 
 function Home() {
-  const { duck, store, dispatch } = useDuckState(HomeDuck);
+  const { duck, store, dispatch } = useDuckState(HomeDuck, 'HomePage');
 
   const {
     showHistoryRecord,

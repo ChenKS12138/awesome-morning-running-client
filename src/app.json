@@ -13,5 +13,6 @@
   ],
   "window": {
     "title": "晨跑"
-  }
+  },
+  "entryPagePath": "pages/Home/index"
 }

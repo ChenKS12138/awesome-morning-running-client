@@ -1,7 +1,7 @@
-import { Duck, createToPayload, reduceFromPayload } from '@/utils/duck';
+import { Duck, createToPayload, reduceFromPayload, createRequestDuck } from '@/utils/duck';
 import { distributeRunningRecord } from '@/utils';
 import { RankItem, HisotryTermRecordItem, RunningRecord } from '@/utils/interface';
-import { takeLatest, put, fork, all, select } from 'redux-saga/effects';
+import { takeLatest, put, fork, all, select, delay } from 'redux-saga/effects';
 import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
 
 export default class HomeDuck extends Duck {
@@ -174,6 +174,15 @@ export default class HomeDuck extends Duck {
           speed: "8'20''",
         },
       ]),
+    };
+  }
+  get quickDucks() {
+    return {
+      ...super.quickDucks,
+      testRequest: createRequestDuck(0, function* () {
+        yield 123;
+        return 3;
+      }),
     };
   }
   get rawSelectors() {
