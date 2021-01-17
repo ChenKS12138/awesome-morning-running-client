@@ -14,5 +14,10 @@
   "window": {
     "title": "晨跑"
   },
-  "entryPagePath": "pages/Home/index"
+  "entryPagePath": "pages/Home/index",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  }
 }

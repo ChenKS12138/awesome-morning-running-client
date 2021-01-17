@@ -5,5 +5,6 @@
   "plugins": [],
   "babelPlugins": [
     "@babel/plugin-transform-regenerator"
-  ]
+  ],
+  "sourceMap": false
 }

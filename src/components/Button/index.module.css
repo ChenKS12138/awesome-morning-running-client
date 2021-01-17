@@ -1,4 +1,7 @@
 .button {
   height: 49px;
   width: 226px;
+  border-radius: 24.5px;
+  display: grid;
+  place-items: center;
 }

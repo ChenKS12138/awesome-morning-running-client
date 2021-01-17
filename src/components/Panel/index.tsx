@@ -8,6 +8,7 @@ export default {
   },
   OutlineGreen: {
     Zero: PanelOutlineGreen0,
+    One: PanelOutlineGreen1,
   },
   OutlineGray: {
     Zero: PanelOutlineGray0,
@@ -33,6 +34,14 @@ function PanelSolidGray0({ children, height, width, className }: IPanel) {
 function PanelOutlineGreen0({ children, height, width, className }: IPanel) {
   return (
     <view className={composeClassnames(styles['outline-green-0'], className)} style={{ height, width }}>
+      {children}
+    </view>
+  );
+}
+
+function PanelOutlineGreen1({ children, height, width, className }: IPanel) {
+  return (
+    <view className={composeClassnames(styles['outline-green-1'], className)} style={{ height, width }}>
       {children}
     </view>
   );

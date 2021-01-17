@@ -10,6 +10,12 @@
   border-radius: 8px;
   box-sizing: border-box;
 }
+.outline-green-1 {
+  background-color: #f1f1f1;
+  border: #7ed321 solid 2px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
 
 .outline-gray-0 {
   border: 2px #e7e7e7 solid;

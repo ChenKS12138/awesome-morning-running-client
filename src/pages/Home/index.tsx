@@ -1,4 +1,4 @@
-import { createElement, useCallback, useEffect, useMemo } from 'rax';
+import { createElement, useCallback, useMemo } from 'rax';
 import {
   RaxView as View,
   RaxScrollView as ScrollView,
@@ -102,7 +102,14 @@ function HomeDial({ goal, total, current }: IHomeDial) {
   }, [percent]);
   return (
     <Dial className={styles.dial} percent={percent} color={color}>
-      <View className={styles['dial-content']}>
+      <View
+        className={styles['dial-content']}
+        onClick={() => {
+          wx.navigateTo({
+            url: '/pages/Exercise/index',
+          });
+        }}
+      >
         <view className={styles['dial-numerical']}>
           <span className={styles['dial-numerical-current']}>{current}</span>
           <span>/{total}</span>

@@ -1,0 +1,123 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.map {
+  width: 100%;
+  flex: 1;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 271px;
+}
+
+.info-timer {
+  display: flex;
+  justify-content: space-between;
+  width: 336px;
+  padding-top: 28px;
+  padding-bottom: 10.5px;
+  font-size: 14px;
+  color: #9b9b9b;
+}
+.info-timer-time {
+  font-weight: 600;
+  font-size: 50px;
+  color: #353535;
+  font-family: 'DIN Condensed';
+}
+
+.info-statistic-container {
+  display: flex;
+  justify-content: space-between;
+  width: 303px;
+  margin-top: 10.5px;
+}
+
+.button-container {
+  margin-top: 10px;
+}
+
+.button-text {
+  font-size: 18px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.divider {
+  height: 1px;
+  color: #f1f1f1;
+}
+
+.button-container {
+  display: flex;
+  width: 314px;
+  justify-content: space-between;
+}
+
+.motion-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+  width: 100%;
+}
+.motion-title {
+  font-size: 18px;
+  color: #353535;
+  font-weight: 600;
+  width: 335px;
+  margin-bottom: 10px;
+}
+
+.motion-scroll-view {
+  padding-left: 20px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100vw;
+}
+
+.motion-scroll-view-item {
+  margin: 0 4px;
+  display: grid;
+  place-items: center;
+}
+.motion-scroll-view-item-img {
+  width: 31px;
+  height: 31px;
+}
+
+.fader {
+  background: linear-gradient(to right, #47b13d, #ffffff);
+  height: 4px;
+}
+
+.rank-text {
+  font-size: 14px;
+  font-weight: 500;
+  font-family: initial;
+}
+
+/** 完成跑操 */
+.info--finish {
+  height: 409px;
+}
+.info-timer-time--finish {
+  font-size: 18px;
+  font-family: initial;
+  font-weight: initial;
+}
+.info-timer-time-numberic--finish {
+  font-size: 50px;
+  font-family: 'DIN Condensed';
+}
+
+.info-statistic-container--finish {
+  margin-bottom: 18px;
+}
