@@ -1,32 +1,32 @@
 .solid-gray-0 {
   background-color: #f1f1f1;
-  border-radius: 10px;
+  border-radius: 20rpx;
   box-sizing: border-box;
 }
 
 .outline-green-0 {
   background-color: #fff;
-  border: #7ed321 solid 2px;
-  border-radius: 8px;
+  border: #7ed321 solid 4rpx;
+  border-radius: 16rpx;
   box-sizing: border-box;
 }
 .outline-green-1 {
   background-color: #f1f1f1;
-  border: #7ed321 solid 2px;
-  border-radius: 8px;
+  border: #7ed321 solid 4rpx;
+  border-radius: 16rpx;
   box-sizing: border-box;
 }
 
 .outline-gray-0 {
-  border: 2px #e7e7e7 solid;
+  border: 4rpx #e7e7e7 solid;
   background-color: #ededed;
-  border-radius: 8px;
+  border-radius: 16rpx;
   box-sizing: border-box;
 }
 
 .outline-gray-1 {
-  border: 2px #9b9b9b solid;
+  border: 4rpx #9b9b9b solid;
   background-color: #ededed;
-  border-radius: 8px;
+  border-radius: 16rpx;
   box-sizing: border-box;
 }

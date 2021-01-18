@@ -54,12 +54,12 @@ function Home() {
         <HomeDial total={totalRunningCount} current={currentRunningCount} goal={'跑操目标'} />
         <HomeStatistic compensatoryCount={compensatoryCount} ranking={ranking} speed={speed} />
         <view className={styles.panels}>
-          <Panel.SolidGray.Zero width="146px" height="45px">
+          <Panel.SolidGray.Zero width="292rpx" height="90rpx">
             <view className={styles['panel-text']} onClick={handleShowRankList}>
               今日排行榜
             </view>
           </Panel.SolidGray.Zero>
-          <Panel.SolidGray.Zero width="146px" height="45px">
+          <Panel.SolidGray.Zero width="292rpx" height="90rpx">
             <view className={styles['panel-text']} onClick={handleShowHistoryRecord}>
               历史跑操记录
             </view>
@@ -204,11 +204,11 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
               </>
             );
             return runningRecordItem.ranking ? (
-              <Panel.OutlineGreen.Zero key={key} className={styles['record-item']} width="347px" height="50px">
+              <Panel.OutlineGreen.Zero key={key} className={styles['record-item']} width="694rpx" height="100rpx">
                 {inner}
               </Panel.OutlineGreen.Zero>
             ) : (
-              <Panel.OutlineGray.One key={key} className={styles['record-item']} width="347px" height="50px">
+              <Panel.OutlineGray.One key={key} className={styles['record-item']} width="694rpx" height="100rpx">
                 {inner}
               </Panel.OutlineGray.One>
             );
@@ -221,7 +221,7 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
                 <view className={styles['record-grid']}>
                   {item.records.map((record, recordKey) => {
                     return record.ranking !== null ? (
-                      <Panel.OutlineGreen.Zero key={String(key) + String(recordKey)} width="63px" height="75px">
+                      <Panel.OutlineGreen.Zero key={String(key) + String(recordKey)} width="126rpx" height="150rpx">
                         <view className={styles['record-grid-group-item']}>
                           <view className={styles['record-grid-group-item-day']}>{record.day}</view>
                           <view className={styles['record-grid-group-item-mood']}>{record.mood}</view>
@@ -230,7 +230,7 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
                         </view>
                       </Panel.OutlineGreen.Zero>
                     ) : (
-                      <Panel.OutlineGray.One key={String(key) + String(recordKey)} width="63px" height="75px">
+                      <Panel.OutlineGray.One key={String(key) + String(recordKey)} width="126rpx" height="150rpx">
                         <view className={styles['record-grid-group-item']}>
                           <view
                             className={composeClassnames(
@@ -270,7 +270,7 @@ function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
                 <view className={styles['rank-board-item-sub']}>
                   <view className={styles['rank-board-item-ranking']}>{rankItem.ranking}</view>
                   <view className={styles['rank-board-avatar-wrapper']}>
-                    <Avatar src={rankItem.avatarUri} size="40px" />
+                    <Avatar src={rankItem.avatarUri} size="80rpx" />
                   </view>
                   <view className={styles['rank-board-item-info']}>
                     <view className={styles['rank-board-item-name']}>{rankItem.username}</view>
@@ -297,7 +297,7 @@ function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
           <view className={styles['rank-mine-sub']}>
             <view className={styles['rank-mine-ranking']}>{myRank.ranking}</view>
             <view className={styles['rank-mine-avatar-wrapper']}>
-              <Avatar src={myRank.avatarUri} size="40px" />
+              <Avatar src={myRank.avatarUri} size="80rpx" />
             </view>
             <view className={styles['rank-mine-info']}>
               <view className={styles['rank-mine-username']}>{myRank.username}</view>
@@ -345,11 +345,11 @@ function HomeHistoryRecordModal({ dispatch, store, duck }: DuckProps<HomeDuck>) 
           );
 
           return item.isPass ? (
-            <Panel.OutlineGreen.Zero key={key} className={styles['history-list-item']} height="54px" width="279px">
+            <Panel.OutlineGreen.Zero key={key} className={styles['history-list-item']} height="108rpx" width="588rpx">
               {innner}
             </Panel.OutlineGreen.Zero>
           ) : (
-            <Panel.OutlineGray.Zero key={key} className={styles['history-list-item']} height="54px" width="279px">
+            <Panel.OutlineGray.Zero key={key} className={styles['history-list-item']} height="108rpx" width="588rpx">
               {innner}
             </Panel.OutlineGray.Zero>
           );

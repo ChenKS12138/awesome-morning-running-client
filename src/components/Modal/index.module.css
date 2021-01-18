@@ -14,8 +14,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  border-radius: 9px;
-  width: 324px;
-  height: 588px;
+  border-radius: 18rpx;
+  width: 648rpx;
+  height: 1176rpx;
   overflow: hidden;
 }

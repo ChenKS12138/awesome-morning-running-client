@@ -4,13 +4,13 @@
 }
 
 .title {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #9b9b9b;
   font-weight: 400;
 }
 
 .value {
   font-family: 'DIN Condensed';
-  font-size: 30px;
+  font-size: 60rpx;
   font-weight: bold;
 }

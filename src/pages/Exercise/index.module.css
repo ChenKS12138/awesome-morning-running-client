@@ -13,21 +13,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 271px;
+  height: 542rpx;
 }
 
 .info-timer {
   display: flex;
   justify-content: space-between;
-  width: 336px;
-  padding-top: 28px;
-  padding-bottom: 10.5px;
-  font-size: 14px;
+  width: 672rpx;
+  padding-top: 56rpx;
+  padding-bottom: 21rpx;
+  font-size: 28rpx;
   color: #9b9b9b;
 }
 .info-timer-time {
   font-weight: 600;
-  font-size: 50px;
+  font-size: 100rpx;
   color: #353535;
   font-family: 'DIN Condensed';
 }
@@ -35,28 +35,28 @@
 .info-statistic-container {
   display: flex;
   justify-content: space-between;
-  width: 303px;
-  margin-top: 10.5px;
+  width: 606rpx;
+  margin-top: 21rpx;
 }
 
 .button-container {
-  margin-top: 10px;
+  margin-top: 20rpx;
 }
 
 .button-text {
-  font-size: 18px;
+  font-size: 36rpx;
   color: #ffffff;
   font-weight: 500;
 }
 
 .divider {
-  height: 1px;
+  height: 2rpx;
   color: #f1f1f1;
 }
 
 .button-container {
   display: flex;
-  width: 314px;
+  width: 628rpx;
   justify-content: space-between;
 }
 
@@ -64,19 +64,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 30rpx;
   width: 100%;
 }
 .motion-title {
-  font-size: 18px;
+  font-size: 36rpx;
   color: #353535;
   font-weight: 600;
-  width: 335px;
-  margin-bottom: 10px;
+  width: 670rpx;
+  margin-bottom: 20rpx;
 }
 
 .motion-scroll-view {
-  padding-left: 20px;
+  padding-left: 40rpx;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -84,40 +84,40 @@
 }
 
 .motion-scroll-view-item {
-  margin: 0 4px;
+  margin: 0 8rpx;
   display: grid;
   place-items: center;
 }
 .motion-scroll-view-item-img {
-  width: 31px;
-  height: 31px;
+  width: 62rpx;
+  height: 62rpx;
 }
 
 .fader {
   background: linear-gradient(to right, #47b13d, #ffffff);
-  height: 4px;
+  height: 8rpx;
 }
 
 .rank-text {
-  font-size: 14px;
+  font-size: 28rpx;
   font-weight: 500;
   font-family: initial;
 }
 
 /** 完成跑操 */
 .info--finish {
-  height: 409px;
+  height: 818rpx;
 }
 .info-timer-time--finish {
-  font-size: 18px;
+  font-size: 36rpx;
   font-family: initial;
   font-weight: initial;
 }
 .info-timer-time-numberic--finish {
-  font-size: 50px;
+  font-size: 100rpx;
   font-family: 'DIN Condensed';
 }
 
 .info-statistic-container--finish {
-  margin-bottom: 18px;
+  margin-bottom: 36rpx;
 }

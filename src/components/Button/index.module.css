@@ -1,7 +1,7 @@
 .button {
-  height: 49px;
-  width: 226px;
-  border-radius: 24.5px;
+  height: 98rpx;
+  width: 452rpx;
+  border-radius: 49rpx;
   display: grid;
   place-items: center;
 }

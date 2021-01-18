@@ -53,7 +53,7 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
         </Statistic>
         <Avatar
           src="https://avatars1.githubusercontent.com/u/42082890?s=460&u=576fffd9f1773ebf346c06afb3326b30ad21d0fd&v=4"
-          size="55px"
+          size="110rpx"
         />
       </view>
       <Divider className={styles.divider} />
@@ -93,7 +93,7 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
           {
             condition: EXERCISE_STATUS.OEVERTIME,
             handler: (
-              <Button color={Button.colors.GRAY} width="314px">
+              <Button color={Button.colors.GRAY} width="628rpx">
                 <text className={styles['button-text']}>已超时，无法打卡</text>
               </Button>
             ),
@@ -124,7 +124,7 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
                     },
                   ])(condition) as any
                 }
-                width="314px"
+                width="628rpx"
               >
                 <text className={styles['button-text']}>完成跑操</text>
               </Button>
@@ -158,7 +158,7 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
         </Statistic>
         <Avatar
           src="https://avatars1.githubusercontent.com/u/42082890?s=460&u=576fffd9f1773ebf346c06afb3326b30ad21d0fd&v=4"
-          size="55px"
+          size="110rpx"
         />
       </view>
       <Divider className={styles.fader} />
@@ -213,13 +213,13 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
               }}
             >
               {motion === emoji.key ? (
-                <Panel.OutlineGreen.One height="60px" width="73px" className={styles['motion-scroll-view-item']}>
+                <Panel.OutlineGreen.One height="120rpx" width="146rpx" className={styles['motion-scroll-view-item']}>
                   <view>
                     <img src={emoji.src} className={styles['motion-scroll-view-item-img']} />
                   </view>
                 </Panel.OutlineGreen.One>
               ) : (
-                <Panel.SolidGray.Zero height="60px" width="73px" className={styles['motion-scroll-view-item']}>
+                <Panel.SolidGray.Zero height="120rpx" width="146rpx" className={styles['motion-scroll-view-item']}>
                   <view>
                     <img src={emoji.src} className={styles['motion-scroll-view-item-img']} />
                   </view>
@@ -230,10 +230,10 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
         </scroll-view>
       </view>
       <view className={styles['button-container']}>
-        <Button color={Button.colors.GREEN} width="79px">
+        <Button color={Button.colors.GREEN} width="158rpx">
           <Icon.ShareWhite />
         </Button>
-        <Button color={Button.colors.GREEN} width="226px">
+        <Button color={Button.colors.GREEN} width="452rpx">
           <text className={styles['button-text']}>完成</text>
         </Button>
       </view>
