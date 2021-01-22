@@ -18,7 +18,7 @@ export default class LocationDuck extends Duck {
   get reducers() {
     const { types } = this;
     return {
-      location: reduceFromPayload(types.SET_LOCATION, { longitude: 0, latitude: 0 }),
+      location: reduceFromPayload(types.SET_LOCATION, { longitude: 0, latitude: 0, speed: 0, altitude: 0 }),
     };
   }
   *saga() {

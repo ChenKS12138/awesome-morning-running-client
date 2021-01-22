@@ -4,6 +4,13 @@
   box-sizing: border-box;
 }
 
+.solid-green-0 {
+  background-color: #3f6911;
+  border: #3f6911 solid 4rpx;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+}
+
 .outline-green-0 {
   background-color: #fff;
   border: #7ed321 solid 4rpx;
@@ -13,6 +20,13 @@
 .outline-green-1 {
   background-color: #f1f1f1;
   border: #7ed321 solid 4rpx;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+}
+
+.outline-green-2 {
+  background-color: #f1f1f1;
+  border: #3f6911 solid 4rpx;
   border-radius: 16rpx;
   box-sizing: border-box;
 }

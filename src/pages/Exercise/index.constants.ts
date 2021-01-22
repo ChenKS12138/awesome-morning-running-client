@@ -16,13 +16,6 @@ export enum EXERCISE_STATUS {
   FINISH, // 完成跑操
 }
 
-export enum EMOJI_TYPE {
-  GRINNING_FACE,
-  FACE_WITH_RAISED_EYEBROW,
-  LOUDLY_CRYING_FACE,
-  UNAMSED_FACE,
-}
-
 /**
  * 记录心情 emoji
  * code 被作为key不应该重复
@@ -30,18 +23,18 @@ export enum EMOJI_TYPE {
 export const EMOJIS = [
   {
     src: EMOJI_GRINNING_FACE,
-    key: EMOJI_TYPE.GRINNING_FACE,
+    value: '😀',
   },
   {
     src: EMOJI_FACE_WITH_RAISED_EYEBROW,
-    key: EMOJI_TYPE.FACE_WITH_RAISED_EYEBROW,
+    value: '🤨',
   },
   {
     src: EMOJI_LOUDLY_CRYING_FACE,
-    key: EMOJI_TYPE.LOUDLY_CRYING_FACE,
+    value: '😭',
   },
   {
     src: EMOJI_UNAMUSED_FACE,
-    key: EMOJI_TYPE.UNAMSED_FACE,
+    value: '😒',
   },
 ];

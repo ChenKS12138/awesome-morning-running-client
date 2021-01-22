@@ -1,0 +1,32 @@
+.title {
+  font-size: 80rpx;
+  margin-top: 80rpx;
+  margin-left: 40rpx;
+}
+
+.input-wrapper {
+  height: 80rpx;
+  width: 720rpx;
+  margin: 0 auto;
+  margin-top: 40rpx;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  padding-left: 30rpx;
+}
+
+.btn-wrapper {
+  display: grid;
+  place-items: center;
+  font-size: 45rpx;
+  padding-left: 0px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.btn-wrapper--validate {
+  color: #fff;
+}
+
+.input {
+  font-size: 36rpx;
+}

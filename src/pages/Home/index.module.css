@@ -38,7 +38,13 @@
   font-size: 32rpx;
   text-align: center;
   line-height: 90rpx;
-  color: #4a4a4a;
+  color: #4a4a4a !important;
+  background-color: #f1f1f1 !important;
+  border-radius: 20rpx;
+  box-sizing: border-box;
+}
+.panel-text::after {
+  border: none;
 }
 
 /* record */
@@ -145,6 +151,7 @@
 /* home */
 .container {
   align-items: center;
+  padding-bottom: 80rpx;
 }
 
 .panels {
@@ -313,7 +320,7 @@
 
 .history-list {
   margin-top: 122rpx;
-  margin-left: 46rpx;
+  margin-left: 35rpx;
 }
 
 .history-list-item {
@@ -352,4 +359,11 @@
 .history-list-item-count {
   font-size: 52rpx;
   font-family: 'DIN Condensed';
+}
+
+.unbind-container {
+  display: grid;
+  place-items: center;
+  color: #4a4a4a;
+  margin-top: 30rpx;
 }

@@ -1,4 +1,4 @@
-import { createElement, useCallback, useMemo } from 'rax';
+import { createElement, useCallback, useMemo, useEffect } from 'rax';
 import {
   RaxView as View,
   RaxScrollView as ScrollView,
@@ -10,7 +10,7 @@ import {
   Modal,
   Avatar,
 } from '@/components';
-import { numToChineseCharacter, composeClassnames } from '@/utils';
+import { numToChineseCharacter, composeClassnames, parseSecondTime } from '@/utils';
 import { useDuckState, DuckProps } from '@/utils/duck';
 
 import styles from './index.module.css';
@@ -38,15 +38,24 @@ function Home() {
 
   const handleModalMaskClick = useCallback(() => {
     dispatch({ type: duck.types.HIDE_MODAL });
-  }, [dispatch]);
+  }, [dispatch, duck]);
 
   const handleShowRankList = useCallback(() => {
+    dispatch({ type: duck.types.SEND_USER_AVATAR });
     dispatch({ type: duck.types.SHOW_RANK_LIST });
-  }, [dispatch]);
+  }, [dispatch, duck]);
 
   const handleShowHistoryRecord = useCallback(() => {
     dispatch({ type: duck.types.SHOW_HISTORY_RECORD });
+  }, [dispatch, duck]);
+
+  const handleUnbind = useCallback(() => {
+    dispatch({ type: duck.types.SEND_USER_UNBIND });
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch({ type: duck.types.PAGE_RELOAD });
+  }, []);
 
   return (
     <>
@@ -55,9 +64,9 @@ function Home() {
         <HomeStatistic compensatoryCount={compensatoryCount} ranking={ranking} speed={speed} />
         <view className={styles.panels}>
           <Panel.SolidGray.Zero width="292rpx" height="90rpx">
-            <view className={styles['panel-text']} onClick={handleShowRankList}>
+            <button openType="getUserInfo" className={styles['panel-text']} onClick={handleShowRankList}>
               今日排行榜
-            </view>
+            </button>
           </Panel.SolidGray.Zero>
           <Panel.SolidGray.Zero width="292rpx" height="90rpx">
             <view className={styles['panel-text']} onClick={handleShowHistoryRecord}>
@@ -67,6 +76,15 @@ function Home() {
         </view>
         <Divider className={styles.divider} />
         <HomeRecord dispatch={dispatch} store={store} duck={duck} />
+        <Divider className={styles.divider} />
+        <Panel.SolidGray.Zero
+          width="650rpx"
+          height="90rpx"
+          className={styles['unbind-container']}
+          onClick={handleUnbind}
+        >
+          <view>解除绑定</view>
+        </Panel.SolidGray.Zero>
       </View>
       <Modal x-if={showRankList} onClickMask={handleModalMaskClick}>
         <HomeRankListModal dispatch={dispatch} store={store} duck={duck} />
@@ -83,14 +101,16 @@ function Home() {
  */
 
 interface IHomeDial {
-  total: number;
-  current: number;
-  goal: string;
-  // onEditGoal?: () => void;
+  total: number | undefined;
+  current: number | undefined;
+  goal: string | undefined;
 }
 
 function HomeDial({ goal, total, current }: IHomeDial) {
-  const percent = useMemo(() => (current / total) * 100, [current, total]);
+  const percent = useMemo(
+    () => (typeof current === 'number' && typeof total === 'number' && total !== 0 ? (current / total) * 100 : 100),
+    [current, total],
+  );
   const color = useMemo(() => {
     if (percent < 33.3) {
       return Dial.colors.RED;
@@ -105,17 +125,17 @@ function HomeDial({ goal, total, current }: IHomeDial) {
       <View
         className={styles['dial-content']}
         onClick={() => {
-          wx.navigateTo({
+          wx.redirectTo({
             url: '/pages/Exercise/index',
           });
         }}
       >
         <view className={styles['dial-numerical']}>
-          <span className={styles['dial-numerical-current']}>{current}</span>
-          <span>/{total}</span>
+          <span className={styles['dial-numerical-current']}>{current ?? '-'}</span>
+          <span>/{total ?? '-'}</span>
         </view>
         <view className={styles['dial-goal']}>
-          <span>{goal}</span>
+          <span>{goal ?? '-'}</span>
           <Icon.Edit />
         </view>
       </View>
@@ -124,12 +144,15 @@ function HomeDial({ goal, total, current }: IHomeDial) {
 }
 
 interface IHomeStatistic {
-  compensatoryCount: number;
-  ranking: number;
-  speed: string;
+  compensatoryCount: number | undefined;
+  ranking: number | undefined;
+  speed: number | undefined;
 }
 
 function HomeStatistic({ compensatoryCount, ranking, speed }: IHomeStatistic) {
+  const parsedSpeed = useMemo(() => {
+    return speed ? parseSecondTime(speed) : null;
+  }, [speed]);
   return (
     <view className={styles['statistic-container']}>
       <Statistic>
@@ -138,7 +161,7 @@ function HomeStatistic({ compensatoryCount, ranking, speed }: IHomeStatistic) {
           <Icon.Question />
         </Statistic.Title>
         <Statistic.Value>
-          <text>+{compensatoryCount}</text>
+          <text>+{compensatoryCount ?? '-'}</text>
         </Statistic.Value>
       </Statistic>
       <Statistic>
@@ -148,7 +171,7 @@ function HomeStatistic({ compensatoryCount, ranking, speed }: IHomeStatistic) {
         <Statistic.Value>
           <text>
             <text className={styles['statistic-small-text']}>NO.</text>
-            <text>{ranking}</text>
+            <text>{ranking ?? '-'}</text>
           </text>
         </Statistic.Value>
       </Statistic>
@@ -157,7 +180,7 @@ function HomeStatistic({ compensatoryCount, ranking, speed }: IHomeStatistic) {
           <text>平均配速</text>
         </Statistic.Title>
         <Statistic.Value>
-          <text>{speed}</text>
+          <text>{parsedSpeed ? `${parsedSpeed.minutes}'${String(parsedSpeed.seconds).padStart(2, '0')}''` : '-'}</text>
         </Statistic.Value>
       </Statistic>
     </view>
@@ -255,7 +278,7 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
 }
 
 function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
-  const { rankList, myRank } = duck.selectors(store);
+  const { rankList, todayCheckIn, userInfo } = duck.selectors(store);
   return (
     <view>
       <view className={styles['rank-title-container']}>
@@ -264,58 +287,72 @@ function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
       </view>
       <view className={styles['rank-board-container']}>
         <ScrollView>
-          {rankList?.length &&
-            rankList.map((rankItem, key) => (
-              <view key={key} className={styles['rank-board-item']}>
-                <view className={styles['rank-board-item-sub']}>
-                  <view className={styles['rank-board-item-ranking']}>{rankItem.ranking}</view>
-                  <view className={styles['rank-board-avatar-wrapper']}>
-                    <Avatar src={rankItem.avatarUri} size="80rpx" />
+          {rankList?.length
+            ? rankList.map((rankItem, key) => (
+                // eslint-disable-next-line react/jsx-indent
+                <view key={key} className={styles['rank-board-item']}>
+                  <view className={styles['rank-board-item-sub']}>
+                    <view className={styles['rank-board-item-ranking']}>{rankItem.rank}</view>
+                    <view className={styles['rank-board-avatar-wrapper']}>
+                      <Avatar src={rankItem.avatarBase64Encode} size="80rpx" />
+                    </view>
+                    <view className={styles['rank-board-item-info']}>
+                      <view className={styles['rank-board-item-name']}>{rankItem.username}</view>
+                      <view className={styles['rank-board-item-duration']}>
+                        {formatTime(rankItem.startAt)}
+                        {'-'}
+                        {formatTime(rankItem.endAt)}
+                      </view>
+                    </view>
                   </view>
-                  <view className={styles['rank-board-item-info']}>
-                    <view className={styles['rank-board-item-name']}>{rankItem.username}</view>
-                    <view className={styles['rank-board-item-duration']}>
-                      {rankItem.startTime}
-                      {'-'}
-                      {rankItem.endTime}
+                  <view className={styles['rank-board-item-sub']}>
+                    <view className={styles['rank-board-item-speed']}>
+                      {formatSpeed(rankItem.endAt - rankItem.startAt)}
+                    </view>
+                    <view
+                      className={styles['rank-board-item-like']}
+                      onClick={() => {
+                        dispatch({
+                          type: duck.types.SEND_LIKE_CHECK_IN,
+                          payload: { checkInID: rankItem.id, isLike: !rankItem.isLike },
+                        });
+                      }}
+                    >
+                      {rankItem.isLike ? <Icon.CowRed /> : <Icon.CowGray />}
+                      <view>{rankItem.likeCount}</view>
                     </view>
                   </view>
                 </view>
-                <view className={styles['rank-board-item-sub']}>
-                  <view className={styles['rank-board-item-speed']}>{rankItem.speed}</view>
-                  <view className={styles['rank-board-item-like']}>
-                    {rankItem.isLiked ? <Icon.CowRed /> : <Icon.CowGray />}
-                    <view>{rankItem.likeCount}</view>
-                  </view>
-                </view>
-              </view>
-            ))}
+              ))
+            : null}
         </ScrollView>
       </view>
-      <view className={styles['rank-mine-wrapper']}>
-        <view className={styles['rank-mine-container']}>
-          <view className={styles['rank-mine-sub']}>
-            <view className={styles['rank-mine-ranking']}>{myRank.ranking}</view>
-            <view className={styles['rank-mine-avatar-wrapper']}>
-              <Avatar src={myRank.avatarUri} size="80rpx" />
-            </view>
-            <view className={styles['rank-mine-info']}>
-              <view className={styles['rank-mine-username']}>{myRank.username}</view>
-              <view className={styles['rank-mine-duration']}>
-                {myRank.startTime}
-                {'-'}
-                {myRank.endTime}
+      {todayCheckIn ? (
+        <view className={styles['rank-mine-wrapper']}>
+          <view className={styles['rank-mine-container']}>
+            <view className={styles['rank-mine-sub']}>
+              <view className={styles['rank-mine-ranking']}>{todayCheckIn.rank}</view>
+              <view className={styles['rank-mine-avatar-wrapper']}>
+                <open-data type="userAvatarUrl" />
+              </view>
+              <view className={styles['rank-mine-info']}>
+                <view className={styles['rank-mine-username']}>{userInfo?.username}</view>
+                <view className={styles['rank-mine-duration']}>
+                  {formatTime(todayCheckIn.startAt)}
+                  {'-'}
+                  {formatTime(todayCheckIn.endAt)}
+                </view>
               </view>
             </view>
-          </view>
-          <view className={styles['rank-mine-sub']}>
-            <view className={styles['rank-mine-speed']}>{myRank.speed}</view>
-            <view className={styles['rank-mine-share-wrapper']}>
-              <Icon.ShareGreen />
+            <view className={styles['rank-mine-sub']}>
+              <view className={styles['rank-mine-speed']}>{/* {`7'33''`} */}</view>
+              <view className={styles['rank-mine-share-wrapper']}>
+                <Icon.ShareGreen />
+              </view>
             </view>
           </view>
         </view>
-      </view>
+      ) : null}
     </view>
   );
 }
@@ -333,11 +370,13 @@ function HomeHistoryRecordModal({ dispatch, store, duck }: DuckProps<HomeDuck>) 
             <>
               <view className={styles['history-list-item-content']}>
                 <view>
-                  <view className={styles['history-list-item-annual']}>{item.annual}</view>
-                  <view className={styles['history-list-item-term']}>第{numToChineseCharacter(item.term)}学期</view>
+                  <view className={styles['history-list-item-annual']}>
+                    {`${item.academicYear}-${item.academicYear + 1}`}
+                  </view>
+                  <view className={styles['history-list-item-term']}>第{numToChineseCharacter(item.semester)}学期</view>
                 </view>
                 <view className={styles['history-list-item-count-wrapper']}>
-                  <text className={styles['history-list-item-count']}>{item.count}</text>
+                  <text className={styles['history-list-item-count']}>{item.currentCount}</text>
                   <text>次</text>
                 </view>
               </view>
@@ -357,4 +396,14 @@ function HomeHistoryRecordModal({ dispatch, store, duck }: DuckProps<HomeDuck>) 
       </view>
     </view>
   );
+}
+
+function formatSpeed(second) {
+  const time = parseSecondTime(second / 1000);
+  return `${time.minutes}'${time.seconds.toString().padStart(2, '0')}''`;
+}
+
+function formatTime(millsec) {
+  const t = new Date(millsec / 1000);
+  return `${t.getHours()}:${t.getMinutes()}`;
 }

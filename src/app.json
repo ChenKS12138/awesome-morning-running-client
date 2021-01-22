@@ -9,6 +9,11 @@
       "path": "/exercise",
       "source": "pages/Exercise/index",
       "navigationBarTitleText": "晨跑"
+    },
+    {
+      "path": "/login",
+      "source": "pages/Login/index",
+      "navigationBarTitleText": "登录"
     }
   ],
   "window": {

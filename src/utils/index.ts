@@ -1,5 +1,6 @@
-import { RunningRecord } from './interface';
+import { RunningRecord } from './interface.old';
 import { isWeChatMiniProgram } from 'universal-env';
+import { waitForModalHidden } from './effects';
 
 /**
  * @param {string[]} classnames
@@ -44,22 +45,19 @@ export function distributeRunningRecord(records: RunningRecord[]): DistributedRu
 /**
  * 获取经纬度
  */
-export function fetchLocation(): Promise<{ longitude: number; latitude: number }> {
+export function fetchLocation(): Promise<{ longitude: number; latitude: number; speed: number; altitude: number }> {
   if (isWeChatMiniProgram) {
     return new Promise((resolve, reject) => {
       wx.getLocation({
         type: 'gcj02',
         altitude: true,
         success(location) {
-          resolve({
-            longitude: location.longitude,
-            latitude: location.latitude,
-          });
+          resolve(location);
         },
       });
     });
   } else {
-    return Promise.resolve({ longitude: 0, latitude: 0 });
+    return Promise.resolve({ longitude: 0, latitude: 0, speed: 0, altitude: 0 });
   }
 }
 
@@ -92,4 +90,71 @@ export function matcher(conditions: IMathcer) {
       return null;
     }
   };
+}
+
+export function getCurrentFreshmanGrade(): number {
+  const now = new Date();
+  return now.getFullYear() - 1;
+}
+
+export async function getWxCode(): Promise<string> {
+  if (isWeChatMiniProgram) {
+    return new Promise((resolve) => {
+      wx.login({
+        complete(res) {
+          return resolve(res?.code ?? '');
+        },
+      });
+    });
+  } else {
+    return Promise.resolve('');
+  }
+}
+
+export async function getUserAvatarUri(): Promise<string> {
+  if (isWeChatMiniProgram) {
+    return new Promise((resolve, reject) => {
+      wx.getUserInfo({
+        success(result) {
+          resolve(result.userInfo.avatarUrl);
+        },
+        fail(reason) {
+          reject(reason);
+        },
+      });
+    });
+  } else {
+    return Promise.resolve('');
+  }
+}
+
+export async function getUriBase64Encode(uri: string): Promise<string> {
+  if (isWeChatMiniProgram) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        method: 'GET',
+        url: uri,
+        responseType: 'arraybuffer',
+        success(response) {
+          resolve('data:image/jpeg;base64,' + wx.arrayBufferToBase64(response.data as any));
+        },
+        fail(reason) {
+          reject(reason);
+        },
+      });
+    });
+  } else {
+    return Promise.resolve('');
+  }
+}
+
+export function showModal(config) {
+  (waitForModalHidden as any).semaphore += 1;
+  return wx.showModal({
+    ...config,
+    complete(result) {
+      (waitForModalHidden as any).semaphore -= 1;
+      config?.complete?.(result);
+    },
+  });
 }

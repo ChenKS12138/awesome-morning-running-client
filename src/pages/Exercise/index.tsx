@@ -7,13 +7,16 @@ import ExerciseDuck from './index.duck';
 
 import styles from './index.module.css';
 import { EXERCISE_STATUS, EMOJIS } from './index.constants';
-import { matcher, composeClassnames } from '@/utils';
+import { matcher, composeClassnames, parseSecondTime } from '@/utils';
 
 export default Exercise;
 
 function Exercise() {
   const { dispatch, duck, store } = useDuckState<ExerciseDuck>(ExerciseDuck);
   const { exerciseStatus } = duck.selectors(store);
+  useEffect(() => {
+    dispatch({ type: duck.types.EXEC_START });
+  }, []);
   return (
     <view className={styles.container}>
       <ExerciseMap duck={duck.ducks.location} store={store} dispatch={dispatch} />
@@ -28,15 +31,15 @@ function Exercise() {
 
 function ExerciseMap({ dispatch, duck, store }: DuckProps<LocationDuck>) {
   const { location } = duck.selectors(store);
-  useEffect(() => {
-    dispatch({ type: duck.types.FETCH_LOCATION });
-  }, []);
   return <map className={styles.map} longitude={location.longitude} latitude={location.latitude} scale="16" />;
 }
 
 function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
-  const { parsedAverageTime, parsedPace, parsedUsedTime, currentCount, totalCount } = duck.selectors(store);
+  const { parsedAverageTime, parsedUsedTime, currentCount, totalCount } = duck.selectors(store);
+
   const { exerciseStatus } = duck.selectors(store);
+  const { location } = duck.ducks.location.selectors(store);
+  const parsedPace = parseSecondTime(Math.max(0, location.speed));
 
   return (
     <view className={styles.info}>
@@ -51,10 +54,11 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
             <text>加油！跑起来！</text>
           </Statistic.Title>
         </Statistic>
-        <Avatar
+        {/* <Avatar
           src="https://avatars1.githubusercontent.com/u/42082890?s=460&u=576fffd9f1773ebf346c06afb3326b30ad21d0fd&v=4"
           size="110rpx"
-        />
+        /> */}
+        <open-data type="userAvatarUrl" />
       </view>
       <Divider className={styles.divider} />
       <view className={styles['info-statistic-container']}>
@@ -104,26 +108,23 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
               <Button
                 onClick={() => {
                   dispatch({
-                    type: duck.types.SET_EXERCISE_STATUS,
-                    payload: EXERCISE_STATUS.FINISH,
+                    type: duck.types.EXEC_FINISH,
                   });
                 }}
-                color={
-                  matcher([
-                    {
-                      condition: EXERCISE_STATUS.RUNNING_GREEN,
-                      handler: Button.colors.GREEN,
-                    },
-                    {
-                      condition: EXERCISE_STATUS.RUNNING_ORANGE,
-                      handler: Button.colors.ORANGE,
-                    },
-                    {
-                      condition: EXERCISE_STATUS.RUNNING_RED,
-                      handler: Button.colors.RED,
-                    },
-                  ])(condition) as any
-                }
+                color={matcher([
+                  {
+                    condition: EXERCISE_STATUS.RUNNING_GREEN,
+                    handler: Button.colors.GREEN,
+                  },
+                  {
+                    condition: EXERCISE_STATUS.RUNNING_ORANGE,
+                    handler: Button.colors.ORANGE,
+                  },
+                  {
+                    condition: EXERCISE_STATUS.RUNNING_RED,
+                    handler: Button.colors.RED,
+                  },
+                ])(condition)}
                 width="628rpx"
               >
                 <text className={styles['button-text']}>完成跑操</text>
@@ -145,7 +146,7 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
         <Statistic>
           <Statistic.Value>
             <text className={composeClassnames(styles['info-timer-time'], styles['info-timer-time--finish'])}>
-              第<text className={styles['info-timer-time-numberic--finish']}>{currentCount}</text>
+              第<text className={styles['info-timer-time-numberic--finish']}>{currentCount + 1}</text>
               次完成
             </text>
           </Statistic.Value>
@@ -156,10 +157,11 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
             </text>
           </Statistic.Title>
         </Statistic>
-        <Avatar
+        {/* <Avatar
           src="https://avatars1.githubusercontent.com/u/42082890?s=460&u=576fffd9f1773ebf346c06afb3326b30ad21d0fd&v=4"
           size="110rpx"
-        />
+        /> */}
+        <open-data type="userAvatarUrl" />
       </view>
       <Divider className={styles.fader} />
       <view
@@ -167,10 +169,8 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
       >
         <Statistic>
           <Statistic.Value>
-            <text>
-              {todayRank}
-              <text className={styles['rank-text']}>名</text>
-            </text>
+            <text>{todayRank}</text>
+            <text className={styles['rank-text']}>名</text>
           </Statistic.Value>
           <Statistic.Title>
             <text>今日排名</text>
@@ -209,10 +209,10 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
             <view
               key={index}
               onClick={() => {
-                dispatch(duck.creators.setMotion(emoji.key));
+                dispatch(duck.creators.setMotion(emoji.value));
               }}
             >
-              {motion === emoji.key ? (
+              {motion === emoji.value ? (
                 <Panel.OutlineGreen.One height="120rpx" width="146rpx" className={styles['motion-scroll-view-item']}>
                   <view>
                     <img src={emoji.src} className={styles['motion-scroll-view-item-img']} />
@@ -234,7 +234,16 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
           <Icon.ShareWhite />
         </Button>
         <Button color={Button.colors.GREEN} width="452rpx">
-          <text className={styles['button-text']}>完成</text>
+          <text
+            className={styles['button-text']}
+            onClick={() => {
+              wx.redirectTo({
+                url: '/pages/Home/index',
+              });
+            }}
+          >
+            完成
+          </text>
         </Button>
       </view>
     </view>
