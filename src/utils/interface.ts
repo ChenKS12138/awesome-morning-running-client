@@ -51,3 +51,30 @@ export interface IRankToday {
   likeCount: number;
   isLike: number;
 }
+
+/**
+ * 该同学每日跑操情况
+ */
+export interface RunningRecord {
+  year: number;
+  month: number;
+  day: number;
+  /** ranking为null表示未完成 */
+  ranking: number | null;
+  speed: string;
+  mood: string;
+}
+
+/**
+ * 今日排行榜情况
+ */
+export interface RankItem {
+  avatarUri: string;
+  username: string;
+  startTime: string;
+  endTime: string;
+  speed: string;
+  likeCount: number;
+  isLiked: boolean;
+  ranking: number;
+}

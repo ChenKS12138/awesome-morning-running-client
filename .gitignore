@@ -16,3 +16,7 @@ node_modules/
 .rax/
 
 template.yml
+
+# env file
+.env.development
+.env.production

@@ -15,8 +15,7 @@ interface IRequest {
 }
 
 export const request: IRequest = {
-  baseURL: 'http://localhost:8000',
-  // baseURL: 'https://exercise.miniprogram.cattchen.top',
+  baseURL: REQUEST_BASE_URL || 'http://localhost:3000',
   get(_url: string) {
     return Promise.resolve(null as any);
   },

@@ -1,0 +1,53 @@
+const config = {
+  define: {
+    REQUEST_BASE_URL: process.env.REQUEST_BASE_URL,
+  },
+  targets: ['wechat-miniprogram'],
+  plugins: [],
+  babelPlugins: ['@babel/plugin-transform-regenerator'],
+  sourceMap: false,
+  'wechat-miniprogram': {
+    nativeConfig: {
+      appid: process.env.WECHAT_MINIPROGRAM_APPID,
+      miniprogramRoot: '.',
+      setting: {
+        urlCheck: false,
+        es6: false,
+        enhance: false,
+        postcss: false,
+        preloadBackgroundData: false,
+        minified: false,
+        newFeature: false,
+        coverView: true,
+        nodeModules: false,
+        autoAudits: false,
+        showShadowRootInWxmlPanel: false,
+        scopeDataCheck: false,
+        uglifyFileName: false,
+        checkInvalidKey: true,
+        checkSiteMap: true,
+        uploadWithSourceMap: true,
+        compileHotReLoad: false,
+        useMultiFrameRuntime: true,
+        useApiHook: true,
+        useApiHostProcess: false,
+        babelSetting: {
+          ignore: [],
+          disablePlugins: [],
+          outputPath: '',
+        },
+        bundle: false,
+        useIsolateContext: true,
+        useCompilerModule: true,
+        userConfirmedUseCompilerModuleSwitch: false,
+        userConfirmedBundleSwitch: false,
+        packNpmManually: false,
+        packNpmRelationList: [],
+        minifyWXSS: true,
+      },
+      condition: {},
+    },
+  },
+};
+
+module.exports = config;

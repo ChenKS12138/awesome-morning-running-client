@@ -1,5 +1,5 @@
-import { RunningRecord } from './interface.old';
 import { isWeChatMiniProgram } from 'universal-env';
+import { RunningRecord } from './interface';
 import { waitForModalHidden } from './effects';
 
 /**

@@ -4,3 +4,8 @@ declare module '*.module.css' {
 }
 
 declare module '*.png';
+
+/**
+ * see build.config.js
+ */
+declare const REQUEST_BASE_URL: string;

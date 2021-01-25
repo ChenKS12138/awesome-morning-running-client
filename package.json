@@ -4,8 +4,8 @@
   "description": "晨跑小程序",
   "version": "1.0.0",
   "scripts": {
-    "start": "rax-app start",
-    "build": "rax-app build",
+    "start": "dotenv -e .env.development -- rax-app start --config build.config.js",
+    "build": "dotenv -e .env.production -- rax-app build --config build.config.js",
     "eslint": "eslint --ext .js,.jsx,.tsx,.ts ./",
     "stylelint": "stylelint \"**/*.{css,scss,less}\"",
     "prettier": "prettier **/* --write",
@@ -29,6 +29,7 @@
     "@types/rax": "^1.0.0",
     "@types/redux-logger": "^3.0.8",
     "@types/weixin-app": "^2.9.2",
+    "dotenv-cli": "^4.0.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^7.1.0",
     "prettier": "^2.1.2",

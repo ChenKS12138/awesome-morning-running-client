@@ -1,6 +1,5 @@
 import { Duck, createToPayload, reduceFromPayload } from '@/utils/duck';
 import { distributeRunningRecord, getUserAvatarUri, getUriBase64Encode, parseSecondTime } from '@/utils';
-import { RankItem, RunningRecord } from '@/utils/interface.old';
 import { put, fork, all, select, takeLatest } from 'redux-saga/effects';
 import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
 import {
@@ -13,7 +12,7 @@ import {
   requestUserUnbind,
   requestCheckInToday,
 } from '@/utils/model';
-import { IUserInfo, ICheckIn, IRankToday, ISemesterCheckIn } from '@/utils/interface';
+import { IUserInfo, ICheckIn, IRankToday, ISemesterCheckIn, RankItem, RunningRecord } from '@/utils/interface';
 
 export default class HomeDuck extends Duck {
   get quickTypes() {

@@ -1,7 +1,7 @@
 import { LocationDuck } from '@/ducks';
 import { useDuckState, DuckProps } from '@/utils/duck';
 import { createElement, useEffect } from 'rax';
-import { Statistic, Avatar, Button, Divider, Icon, Panel } from '@/components';
+import { Statistic, Button, Divider, Icon, Panel } from '@/components';
 
 import ExerciseDuck from './index.duck';
 
