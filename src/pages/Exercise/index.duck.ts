@@ -3,7 +3,7 @@ import { LocationDuck } from '@/ducks';
 import { parseSecondTime, matcher } from '@/utils';
 import { EXERCISE_STATUS } from './index.constants';
 import TimerDuck from '@/ducks/timer.duck';
-import { put, select, fork, takeLatest, call, delay } from 'redux-saga/effects';
+import { put, select, fork, takeLatest, call } from 'redux-saga/effects';
 import { IUserInfo, ICheckIn } from '@/utils/interface';
 import {
   requestUserInfo,

@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "dotenv -e .env.development -- rax-app start --config build.config.js",
+    "start:prod": "dotenv -e .env.production -- rax-app start --config build.config.js",
     "build": "dotenv -e .env.production -- rax-app build --config build.config.js",
     "eslint": "eslint --ext .js,.jsx,.tsx,.ts ./",
     "stylelint": "stylelint \"**/*.{css,scss,less}\"",

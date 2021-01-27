@@ -6,7 +6,7 @@ export * from 'use-duck-state';
 
 const middlewares: any[] = [];
 
-if (process.env.NODE_ENV !== 'production') {
+if (REDUX_LOGGER_ENABLE) {
   const { createLogger } = require('redux-logger');
   middlewares.push(
     createLogger({

@@ -1,6 +1,7 @@
 const config = {
   define: {
     REQUEST_BASE_URL: process.env.REQUEST_BASE_URL,
+    REDUX_LOGGER_ENABLE: process.env.REDUX_LOGGER_ENABLE,
   },
   targets: ['wechat-miniprogram'],
   plugins: [],
@@ -48,6 +49,7 @@ const config = {
       condition: {},
     },
   },
+  tsChecker: true,
 };
 
 module.exports = config;
