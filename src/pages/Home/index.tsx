@@ -15,7 +15,7 @@ import { useDuckState, DuckProps } from '@/utils/duck';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
-import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
+import { RUNNING_RECORD_DISPLAY_MODAL } from '@/utils/constants';
 
 export default Home;
 

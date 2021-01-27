@@ -6,16 +6,16 @@ import { Statistic, Button, Divider, Icon, Panel } from '@/components';
 import ExerciseDuck from './index.duck';
 
 import styles from './index.module.css';
-import { EXERCISE_STATUS, EMOJIS } from './index.constants';
+import { EXERCISE_STATUS, EMOJIS } from '@/utils/constants';
 import { matcher, composeClassnames, parseSecondTime } from '@/utils';
 
 export default Exercise;
 
 function Exercise() {
-  const { dispatch, duck, store } = useDuckState<ExerciseDuck>(ExerciseDuck);
+  const { dispatch, duck, store } = useDuckState<ExerciseDuck>(ExerciseDuck, 'ExercisePage');
   const { exerciseStatus } = duck.selectors(store);
   useEffect(() => {
-    dispatch({ type: duck.types.EXEC_START });
+    dispatch({ type: duck.types.PAGE_RELOAD });
   }, []);
   return (
     <view className={styles.container}>
@@ -97,7 +97,15 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
           {
             condition: EXERCISE_STATUS.OEVERTIME,
             handler: (
-              <Button color={Button.colors.GRAY} width="628rpx">
+              <Button
+                color={Button.colors.GRAY}
+                width="628rpx"
+                onClick={() => {
+                  dispatch({
+                    type: duck.types.FETCH_CHECKIN_END,
+                  });
+                }}
+              >
                 <text className={styles['button-text']}>已超时，无法打卡</text>
               </Button>
             ),
@@ -108,7 +116,7 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
               <Button
                 onClick={() => {
                   dispatch({
-                    type: duck.types.EXEC_FINISH,
+                    type: duck.types.FETCH_CHECKIN_END,
                   });
                 }}
                 color={matcher([
@@ -146,7 +154,7 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
         <Statistic>
           <Statistic.Value>
             <text className={composeClassnames(styles['info-timer-time'], styles['info-timer-time--finish'])}>
-              第<text className={styles['info-timer-time-numberic--finish']}>{currentCount + 1}</text>
+              第<text className={styles['info-timer-time-numberic--finish']}>{currentCount}</text>
               次完成
             </text>
           </Statistic.Value>
@@ -233,17 +241,16 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
         <Button color={Button.colors.GREEN} width="158rpx">
           <Icon.ShareWhite />
         </Button>
-        <Button color={Button.colors.GREEN} width="452rpx">
-          <text
-            className={styles['button-text']}
-            onClick={() => {
-              wx.redirectTo({
-                url: '/pages/Home/index',
-              });
-            }}
-          >
-            完成
-          </text>
+        <Button
+          color={Button.colors.GREEN}
+          width="452rpx"
+          onClick={() => {
+            wx.redirectTo({
+              url: '/pages/Home/index',
+            });
+          }}
+        >
+          <text className={styles['button-text']}>完成</text>
         </Button>
       </view>
     </view>

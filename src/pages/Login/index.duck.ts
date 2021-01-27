@@ -1,10 +1,11 @@
-import { Duck, reduceFromPayload, createToPayload } from '@/utils/duck';
+import { reduceFromPayload, createToPayload } from '@/utils/duck';
 import { getCurrentFreshmanGrade, getWxCode } from '@/utils';
 import { select, fork, takeLatest, put } from 'redux-saga/effects';
 
 import * as model from '@/utils/model';
+import { PageDuck } from '@/ducks';
 
-export default class LoginDuck extends Duck {
+export default class LoginDuck extends PageDuck {
   get quickTypes() {
     enum Types {
       SET_STUDENT_ID,
@@ -14,12 +15,14 @@ export default class LoginDuck extends Duck {
       FETCH_USER_BIND,
     }
     return {
+      ...super.quickTypes,
       ...Types,
     };
   }
   get reducers() {
     const { types } = this;
     return {
+      ...super.reducers,
       studentID: reduceFromPayload<string>(types.SET_STUDENT_ID, ''),
       username: reduceFromPayload<string>(types.SET_USERNAME, ''),
       grade: reduceFromPayload<number>(types.SET_GRADE, getCurrentFreshmanGrade()),
@@ -28,6 +31,7 @@ export default class LoginDuck extends Duck {
   get rawSelectors() {
     type State = this['State'];
     return {
+      ...super.rawSelectors,
       isFormValidate(state: State) {
         return state.studentID && state.grade && state.username;
       },
@@ -36,12 +40,14 @@ export default class LoginDuck extends Duck {
   get creators() {
     const { types } = this;
     return {
+      ...super.creators,
       setStudentID: createToPayload(types.SET_STUDENT_ID),
       setUsername: createToPayload(types.SET_USERNAME),
       setGrade: createToPayload(types.SET_GRADE),
     };
   }
   *saga() {
+    yield* super.saga();
     yield fork([this, this.watchToBind]);
   }
   *watchToBind() {

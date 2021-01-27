@@ -1,3 +1,5 @@
+const pkgInfo = require('./package.json');
+
 const config = {
   define: {
     REQUEST_BASE_URL: process.env.REQUEST_BASE_URL,
@@ -10,7 +12,8 @@ const config = {
   'wechat-miniprogram': {
     nativeConfig: {
       appid: process.env.WECHAT_MINIPROGRAM_APPID,
-      miniprogramRoot: '.',
+      miniprogramRoot: '.', // 以 `build/wechat-miniprogram` 作为项目根目录使用微信开发者工具打开
+      projectname: pkgInfo.name,
       setting: {
         urlCheck: false,
         es6: false,
@@ -26,7 +29,7 @@ const config = {
         scopeDataCheck: false,
         uglifyFileName: false,
         checkInvalidKey: true,
-        checkSiteMap: true,
+        checkSiteMap: false,
         uploadWithSourceMap: true,
         compileHotReLoad: false,
         useMultiFrameRuntime: true,
@@ -50,6 +53,7 @@ const config = {
     },
   },
   tsChecker: true,
+  minify: process.env.NODE_ENV === 'production',
 };
 
 module.exports = config;

@@ -1,7 +1,7 @@
-import { Duck, createToPayload, reduceFromPayload } from '@/utils/duck';
+import { createToPayload, reduceFromPayload } from '@/utils/duck';
 import { distributeRunningRecord, getUserAvatarUri, getUriBase64Encode, parseSecondTime } from '@/utils';
 import { put, fork, all, select, takeLatest } from 'redux-saga/effects';
-import { RUNNING_RECORD_DISPLAY_MODAL } from './index.constants';
+import { RUNNING_RECORD_DISPLAY_MODAL } from '@/utils/constants';
 import {
   requestUserInfo,
   requestUserAvatar,
@@ -13,8 +13,9 @@ import {
   requestCheckInToday,
 } from '@/utils/model';
 import { IUserInfo, ICheckIn, IRankToday, ISemesterCheckIn, RankItem, RunningRecord } from '@/utils/interface';
+import { PageDuck } from '@/ducks';
 
-export default class HomeDuck extends Duck {
+export default class HomeDuck extends PageDuck {
   get quickTypes() {
     enum Types {
       SET_SHOW_RANK_LIST,
@@ -40,16 +41,16 @@ export default class HomeDuck extends Duck {
       SEND_USER_UNBIND,
       SET_CHECK_IN_TODAY,
       FETCH_CHECK_IN_TODAY,
-
-      PAGE_RELOAD,
     }
     return {
+      ...super.quickTypes,
       ...Types,
     };
   }
   get creators() {
     const { types } = this;
     return {
+      ...super.creators,
       setShowRankList: createToPayload<boolean>(types.SET_SHOW_RANK_LIST),
       setShowHistoryRecord: createToPayload<boolean>(types.SET_SHOW_HISTORY_RECORD),
     };
@@ -57,6 +58,7 @@ export default class HomeDuck extends Duck {
   get reducers() {
     const { types } = this;
     return {
+      ...super.reducers,
       userInfo: reduceFromPayload<IUserInfo | null>(types.SET_USER_INFO, null),
       showRankList: reduceFromPayload<boolean>(types.SET_SHOW_RANK_LIST, false),
       showHistoryRecord: reduceFromPayload<boolean>(types.SET_SHOW_HISTORY_RECORD, false),
@@ -84,6 +86,7 @@ export default class HomeDuck extends Duck {
   get rawSelectors() {
     type State = this['State'];
     return {
+      ...super.rawSelectors,
       distributedRunningRecords: (state: State) => distributeRunningRecord(state.runningRecord),
       totalRunningCount: (state: State) => state.userInfo?.totalCount,
       currentRunningCount: (state: State) => state.userInfo?.currentCount,
@@ -93,6 +96,7 @@ export default class HomeDuck extends Duck {
     };
   }
   *saga() {
+    yield* super.saga();
     yield fork([this, this.watchToShowRankList]);
     yield fork([this, this.watchToShowHistoryRecord]);
     yield fork([this, this.watchToHideModal]);

@@ -38,3 +38,20 @@ export const EMOJIS = [
     value: '😒',
   },
 ];
+
+/**
+ * 跑操记录展示模式
+ */
+export enum RUNNING_RECORD_DISPLAY_MODAL {
+  GRID,
+  LIST,
+}
+
+/**
+ * 签到状态
+ */
+export const CHECK_IN_STATUS = {
+  RUNNING: 0,
+  IN_TIME_FINISH: 1,
+  OVERTIME_FINISH: 2,
+};

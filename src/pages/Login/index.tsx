@@ -13,7 +13,7 @@ export default Login;
  * Login Page
  */
 function Login() {
-  const { dispatch, duck, store } = useDuckState<LoginDuck>(LoginDuck);
+  const { dispatch, duck, store } = useDuckState<LoginDuck>(LoginDuck, 'LoginPage');
 
   const { grade, studentID, username, isFormValidate } = duck.selectors(store);
 
