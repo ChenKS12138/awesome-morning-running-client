@@ -77,6 +77,7 @@ if (isWeChatMiniProgram) {
           if (response.data.errCode === null) {
             resolve(config?.success?.(response.data));
           } else if (response.data.errCode === 22) {
+            // 鉴权失败，自动重试一次
             requestToken()
               .then((secondToken) => {
                 if (secondToken) {

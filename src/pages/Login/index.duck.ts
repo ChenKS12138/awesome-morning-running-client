@@ -1,11 +1,11 @@
-import { reduceFromPayload, createToPayload } from '@/utils/duck';
+import { reduceFromPayload, createToPayload, Duck } from '@/utils/duck';
 import { getCurrentFreshmanGrade, getWxCode } from '@/utils';
-import { select, fork, takeLatest, put } from 'redux-saga/effects';
+import { select, fork, takeLatest, put, call } from 'redux-saga/effects';
 
 import * as model from '@/utils/model';
-import { PageDuck } from '@/ducks';
+import { LoadingDuck } from '@/ducks';
 
-export default class LoginDuck extends PageDuck {
+export default class LoginDuck extends Duck {
   get quickTypes() {
     enum Types {
       SET_STUDENT_ID,
@@ -37,6 +37,11 @@ export default class LoginDuck extends PageDuck {
       },
     };
   }
+  get quickDucks() {
+    return {
+      loading: LoadingDuck,
+    };
+  }
   get creators() {
     const { types } = this;
     return {
@@ -47,16 +52,17 @@ export default class LoginDuck extends PageDuck {
     };
   }
   *saga() {
-    yield* super.saga();
     yield fork([this, this.watchToBind]);
   }
   *watchToBind() {
-    const { types, selectors } = this;
+    const { types, selectors, ducks } = this;
     yield takeLatest([types.FETCH_USER_BIND], function* () {
       const { grade, studentID, username, isFormValidate } = selectors(yield select());
       if (isFormValidate) {
+        yield put({ type: ducks.loading.types.WAIT });
         const code = yield getWxCode();
-        const result = yield model.requestUserBind({ grade, studentID, username, code });
+        const result = yield call(model.requestUserBind, { grade, studentID, username, code });
+        yield put({ type: ducks.loading.types.DONE });
         if (result) {
           wx.redirectTo({
             url: '/pages/Home/index',

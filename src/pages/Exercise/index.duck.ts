@@ -1,8 +1,7 @@
-import { reduceFromPayload, createToPayload } from '@/utils/duck';
-import { LocationDuck, PageDuck } from '@/ducks';
+import { reduceFromPayload, createToPayload, Duck } from '@/utils/duck';
+import { LocationDuck, TimerDuck } from '@/ducks';
 import { parseSecondTime, matcher, showModal } from '@/utils';
 import { EXERCISE_STATUS, CHECK_IN_STATUS } from '@/utils/constants';
-import TimerDuck from '@/ducks/timer.duck';
 import { put, select, fork, takeLatest, call } from 'redux-saga/effects';
 import { IUserInfo, ICheckIn } from '@/utils/interface';
 import {
@@ -14,9 +13,10 @@ import {
 } from '@/utils/model';
 import { waitForModalHidden } from '@/utils/effects';
 
-export default class ExerciseDuck extends PageDuck {
+export default class ExerciseDuck extends Duck {
   get quickTypes() {
     enum Types {
+      PAGE_RELOAD,
       SET_USED_TIME,
       SET_EXERCISE_STATUS,
       SET_MOTION,
@@ -85,7 +85,6 @@ export default class ExerciseDuck extends PageDuck {
     };
   }
   *saga() {
-    yield* super.saga();
     yield fork([this, this.watchPluseToChangeDurationAndLocation]);
     yield fork([this, this.watchToFetchUserInfo]);
     yield fork([this, this.watchUsedTimeToChangeExerciseStatus]);
@@ -100,14 +99,7 @@ export default class ExerciseDuck extends PageDuck {
     yield takeLatest([types.PAGE_RELOAD], function* () {
       try {
         const todayCheckIn: ICheckIn | null = yield call(requestCheckInToday);
-        if (todayCheckIn?.status === CHECK_IN_STATUS.OVERTIME_FINISH) {
-          showModal({
-            title: '超时',
-            content: '今日跑操超时!',
-            showCancel: false,
-          });
-          throw new Error('今日跑操超时!');
-        } else if (todayCheckIn?.status === CHECK_IN_STATUS.IN_TIME_FINISH) {
+        if (todayCheckIn?.status === CHECK_IN_STATUS.IN_TIME_FINISH) {
           yield put({ type: types.SET_EXERCISE_STATUS, payload: EXERCISE_STATUS.FINISH });
         } else {
           if (!todayCheckIn) {
@@ -185,7 +177,7 @@ export default class ExerciseDuck extends PageDuck {
           handler: EXERCISE_STATUS.RUNNING_ORANGE,
         },
         {
-          condition: (second) => second <= 600,
+          condition: (seconds) => seconds <= 600,
           handler: EXERCISE_STATUS.RUNNING_RED,
         },
         {

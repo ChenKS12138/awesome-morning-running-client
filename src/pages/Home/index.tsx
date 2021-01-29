@@ -9,6 +9,7 @@ import {
   Panel,
   Modal,
   Avatar,
+  LoadingHover,
 } from '@/components';
 import { numToChineseCharacter, composeClassnames, parseSecondTime } from '@/utils';
 import { useDuckState, DuckProps } from '@/utils/duck';
@@ -92,6 +93,7 @@ function Home() {
       <Modal x-if={showHistoryRecord} onClickMask={handleModalMaskClick}>
         <HomeHistoryRecordModal dispatch={dispatch} store={store} duck={duck} />
       </Modal>
+      <LoadingHover duck={duck.ducks.loading} dispatch={dispatch} store={store} />
     </>
   );
 }

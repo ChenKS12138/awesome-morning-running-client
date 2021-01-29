@@ -1,6 +1,6 @@
 import { createElement, useMemo, useCallback } from 'rax';
 
-import { Panel } from '@/components';
+import { Panel, LoadingHover } from '@/components';
 
 import styles from './index.module.css';
 import { useDuckState } from '@/utils/duck';
@@ -88,6 +88,7 @@ function Login() {
           <view>登录</view>
         </Panel.SolidGray.Zero>
       )}
+      <LoadingHover duck={duck.ducks.loading} store={store} dispatch={dispatch} />
     </view>
   );
 }

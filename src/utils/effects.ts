@@ -1,24 +1,29 @@
 import Observer from './observer';
 
-export function waitForModalHidden() {
-  return new Promise((resolve, reject) => {
-    waitForModalHidden._obervser.subscribe((semaphore) => {
-      if (semaphore === 0) {
-        resolve();
-      } else if (semaphore < 0) {
-        reject('semaphore should not be negative');
-      }
+const modalHidden = {
+  _semaphore: 0,
+  _observer: new Observer(),
+  get semaphore() {
+    return this._semaphore;
+  },
+  set semaphore(value) {
+    this._semaphore = value;
+    this._observer.update(value);
+  },
+  waitForModalHiddenEffect() {
+    return new Promise((resolve, reject) => {
+      const listener = (semaphore) => {
+        if (semaphore === 0) {
+          resolve();
+          this._observer.unSubscribe(listener);
+        } else if (semaphore < 0) {
+          reject('semaphore should not be negative');
+          this._observer.unSubscribe(listener);
+        }
+      };
+      this._observer.subscribe(listener);
     });
-  });
-}
-waitForModalHidden._semaphore = 0;
-waitForModalHidden._obervser = new Observer();
-Reflect.defineProperty(waitForModalHidden, 'semaphore', {
-  get() {
-    return waitForModalHidden._semaphore;
   },
-  set(value) {
-    waitForModalHidden._semaphore = value;
-    waitForModalHidden._obervser.update(value);
-  },
-});
+};
+
+export const waitForModalHidden = modalHidden.waitForModalHiddenEffect.bind(modalHidden);

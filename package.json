@@ -10,7 +10,8 @@
     "eslint": "eslint --ext .js,.jsx,.tsx,.ts ./",
     "stylelint": "stylelint \"**/*.{css,scss,less}\"",
     "prettier": "prettier **/* --write",
-    "lint": "npm run eslint && npm run stylelint"
+    "lint": "npm run eslint && npm run stylelint",
+    "postinstall": "cat ./bin/postinstall.sh | sh"
   },
   "dependencies": {
     "rax": "^1.1.0",
