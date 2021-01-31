@@ -1,9 +1,10 @@
 import { reduceFromPayload, createToPayload, Duck } from '@/utils/duck';
 import { getCurrentFreshmanGrade, getWxCode } from '@/utils';
-import { select, fork, takeLatest, put, call } from 'redux-saga/effects';
+import { select, fork, put, call } from 'redux-saga/effects';
 
 import * as model from '@/utils/model';
 import { LoadingDuck } from '@/ducks';
+import { enchanceTakeLatest } from '@/utils/effects';
 
 export default class LoginDuck extends Duck {
   get quickTypes() {
@@ -56,17 +57,21 @@ export default class LoginDuck extends Duck {
   }
   *watchToBind() {
     const { types, selectors, ducks } = this;
-    yield takeLatest([types.FETCH_USER_BIND], function* () {
+    yield enchanceTakeLatest([types.FETCH_USER_BIND], function* () {
+      console.log('handle user bind');
       const { grade, studentID, username, isFormValidate } = selectors(yield select());
       if (isFormValidate) {
         yield put({ type: ducks.loading.types.WAIT });
-        const code = yield getWxCode();
-        const result = yield call(model.requestUserBind, { grade, studentID, username, code });
-        yield put({ type: ducks.loading.types.DONE });
-        if (result) {
-          wx.redirectTo({
-            url: '/pages/Home/index',
-          });
+        try {
+          const code = yield getWxCode();
+          const result = yield call(model.requestUserBind, { grade, studentID, username, code });
+          if (result) {
+            wx.redirectTo({
+              url: '/pages/Home/index',
+            });
+          }
+        } finally {
+          yield put({ type: ducks.loading.types.DONE });
         }
       }
     });

@@ -1,4 +1,5 @@
 import Observer from './observer';
+import { take, cancel, call } from 'redux-saga/effects';
 
 const modalHidden = {
   _semaphore: 0,
@@ -27,3 +28,18 @@ const modalHidden = {
 };
 
 export const waitForModalHidden = modalHidden.waitForModalHiddenEffect.bind(modalHidden);
+
+export function* enchanceTakeLatest(pattern: any[], saga: any) {
+  let lastTask;
+  while (true) {
+    const action = yield take(pattern);
+    if (lastTask) {
+      yield cancel(lastTask);
+    }
+    try {
+      lastTask = yield call(saga as any, action);
+    } catch (e) {
+      console.error(String(e));
+    }
+  }
+}

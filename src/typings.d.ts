@@ -10,3 +10,4 @@ declare module '*.png';
  */
 declare const REQUEST_BASE_URL: string;
 declare const REDUX_LOGGER_ENABLE: boolean;
+declare const NODE_ENV: 'production' | 'development';

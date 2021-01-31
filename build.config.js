@@ -3,7 +3,8 @@ const pkgInfo = require('./package.json');
 const config = {
   define: {
     REQUEST_BASE_URL: process.env.REQUEST_BASE_URL,
-    REDUX_LOGGER_ENABLE: process.env.REDUX_LOGGER_ENABLE,
+    REDUX_LOGGER_ENABLE: String(process.env.REDUX_LOGGER_ENABLE).toLowerCase() === 'true',
+    NODE_ENV: process.env.NODE_ENV,
   },
   targets: ['wechat-miniprogram'],
   plugins: [],

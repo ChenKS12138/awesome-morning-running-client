@@ -2,7 +2,7 @@ import { reduceFromPayload, createToPayload, Duck } from '@/utils/duck';
 import { LocationDuck, TimerDuck } from '@/ducks';
 import { parseSecondTime, matcher, showModal } from '@/utils';
 import { EXERCISE_STATUS, CHECK_IN_STATUS } from '@/utils/constants';
-import { put, select, fork, takeLatest, call } from 'redux-saga/effects';
+import { put, select, fork, call } from 'redux-saga/effects';
 import { IUserInfo, ICheckIn } from '@/utils/interface';
 import {
   requestUserInfo,
@@ -11,7 +11,7 @@ import {
   requestCheckInStart,
   requestCheckInEnd,
 } from '@/utils/model';
-import { waitForModalHidden } from '@/utils/effects';
+import { waitForModalHidden, enchanceTakeLatest as takeLatest } from '@/utils/effects';
 
 export default class ExerciseDuck extends Duck {
   get quickTypes() {
