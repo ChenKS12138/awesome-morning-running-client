@@ -17,6 +17,7 @@ import { useDuckState, DuckProps } from '@/utils/duck';
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
 import { RUNNING_RECORD_DISPLAY_MODAL } from '@/utils/constants';
+import { empty } from '@/assets';
 
 export default Home;
 
@@ -240,38 +241,42 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
           })
         ) : (
           <view>
-            {state.distributedRunningRecords.map((item, key) => (
-              <view className={styles['record-gird-group']} key={key}>
-                <view className={styles['record-grid-group-title']}>{item.month}月</view>
-                <view className={styles['record-grid']}>
-                  {item.records.map((record, recordKey) => {
-                    return record.ranking !== null ? (
-                      <Panel.OutlineGreen.Zero key={String(key) + String(recordKey)} width="126rpx" height="150rpx">
-                        <view className={styles['record-grid-group-item']}>
-                          <view className={styles['record-grid-group-item-day']}>{record.day}</view>
-                          <view className={styles['record-grid-group-item-mood']}>{record.mood}</view>
-                          <view className={styles['record-grid-group-item-speed']}>{record.speed}</view>
-                          <view className={styles['record-grid-group-item-ranking']}>NO.{record.ranking}</view>
-                        </view>
-                      </Panel.OutlineGreen.Zero>
-                    ) : (
-                      <Panel.OutlineGray.One key={String(key) + String(recordKey)} width="126rpx" height="150rpx">
-                        <view className={styles['record-grid-group-item']}>
-                          <view
-                            className={composeClassnames(
-                              styles['record-grid-group-item-day'],
-                              styles['record-grid-group-item-day--umcomplete'],
-                            )}
-                          >
-                            {record.day}
+            {state.distributedRunningRecords.length ? (
+              state.distributedRunningRecords.map((item, key) => (
+                <view className={styles['record-gird-group']} key={key}>
+                  <view className={styles['record-grid-group-title']}>{item.month}月</view>
+                  <view className={styles['record-grid']}>
+                    {item.records.map((record, recordKey) => {
+                      return record.ranking !== null ? (
+                        <Panel.OutlineGreen.Zero key={String(key) + String(recordKey)} width="126rpx" height="150rpx">
+                          <view className={styles['record-grid-group-item']}>
+                            <view className={styles['record-grid-group-item-day']}>{record.day}</view>
+                            <view className={styles['record-grid-group-item-mood']}>{record.mood}</view>
+                            <view className={styles['record-grid-group-item-speed']}>{record.speed}</view>
+                            <view className={styles['record-grid-group-item-ranking']}>NO.{record.ranking}</view>
                           </view>
-                        </view>
-                      </Panel.OutlineGray.One>
-                    );
-                  })}
+                        </Panel.OutlineGreen.Zero>
+                      ) : (
+                        <Panel.OutlineGray.One key={String(key) + String(recordKey)} width="126rpx" height="150rpx">
+                          <view className={styles['record-grid-group-item']}>
+                            <view
+                              className={composeClassnames(
+                                styles['record-grid-group-item-day'],
+                                styles['record-grid-group-item-day--umcomplete'],
+                              )}
+                            >
+                              {record.day}
+                            </view>
+                          </view>
+                        </Panel.OutlineGray.One>
+                      );
+                    })}
+                  </view>
                 </view>
-              </view>
-            ))}
+              ))
+            ) : (
+              <img className={styles['record-empty']} src={empty} />
+            )}
           </view>
         )}
       </view>

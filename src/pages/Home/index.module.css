@@ -61,6 +61,13 @@
   padding-bottom: 28rpx;
 }
 
+.record-empty {
+  width: 222rpx;
+  height: 222rpx;
+  margin: 84rpx auto;
+  display: block;
+}
+
 .record-item {
   display: flex;
   padding: 0 30rpx;
