@@ -55,3 +55,16 @@ export const CHECK_IN_STATUS = {
   IN_TIME_FINISH: 1,
   OVERTIME_FINISH: 2,
 };
+
+export const VALID_SCENE_EVENT = {
+  CHECK_IN: 'checkIn',
+};
+
+export const VALID_SCENE_TYPE = {
+  START: 'start',
+  END: 'end',
+};
+
+export const VALID_SENCE = {
+  [VALID_SCENE_EVENT.CHECK_IN]: [VALID_SCENE_TYPE.START, VALID_SCENE_TYPE.END],
+};

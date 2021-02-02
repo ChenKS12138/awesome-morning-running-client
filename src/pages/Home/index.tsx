@@ -125,14 +125,7 @@ function HomeDial({ goal, total, current }: IHomeDial) {
   }, [percent]);
   return (
     <Dial className={styles.dial} percent={percent} color={color}>
-      <View
-        className={styles['dial-content']}
-        onClick={() => {
-          wx.redirectTo({
-            url: '/pages/Exercise/index',
-          });
-        }}
-      >
+      <View className={styles['dial-content']}>
         <view className={styles['dial-numerical']}>
           <span className={styles['dial-numerical-current']}>{current ?? '-'}</span>
           <span>/{total ?? '-'}</span>
@@ -206,43 +199,44 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
     <view className={styles.record}>
       <view className={styles['record-title']}>
         <text>跑操记录</text>
-        <view onClick={handleDisplayModalClick}>
+        <view x-if={state.distributedRunningRecords.length} onClick={handleDisplayModalClick}>
           {state.runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.LIST ? <Icon.GridMode /> : <Icon.ListMode />}
         </view>
       </view>
       <view className={styles['record-list']}>
-        {state.runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.LIST ? (
-          state.runningRecord.map((runningRecordItem, key) => {
-            const inner = (
-              <>
-                <view className={styles['record-item-left']}>
-                  <text>{runningRecordItem.mood}</text>
-                  <text className={styles['record-item-date']}>
-                    {`${runningRecordItem.year}-${runningRecordItem.month
-                      .toString()
-                      .padStart(2, '0')}-${runningRecordItem.day.toString().padStart(2, '0')}`}
-                  </text>
-                  <text className={styles['record-item-duration']}>{runningRecordItem.speed}</text>
-                </view>
-                <view className={styles['record-item-right']}>
-                  {runningRecordItem.ranking && `NO.${runningRecordItem.ranking}`}
-                </view>
-              </>
-            );
-            return runningRecordItem.ranking ? (
-              <Panel.OutlineGreen.Zero key={key} className={styles['record-item']} width="694rpx" height="100rpx">
-                {inner}
-              </Panel.OutlineGreen.Zero>
-            ) : (
-              <Panel.OutlineGray.One key={key} className={styles['record-item']} width="694rpx" height="100rpx">
-                {inner}
-              </Panel.OutlineGray.One>
-            );
-          })
-        ) : (
-          <view>
-            {state.distributedRunningRecords.length ? (
-              state.distributedRunningRecords.map((item, key) => (
+        <img x-if={!state.distributedRunningRecords.length} className={styles['record-empty']} src={empty} />
+        <view x-else>
+          {state.runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.LIST ? (
+            state.runningRecord.map((runningRecordItem, key) => {
+              const inner = (
+                <>
+                  <view className={styles['record-item-left']}>
+                    <text>{runningRecordItem.mood}</text>
+                    <text className={styles['record-item-date']}>
+                      {`${runningRecordItem.year}-${runningRecordItem.month
+                        .toString()
+                        .padStart(2, '0')}-${runningRecordItem.day.toString().padStart(2, '0')}`}
+                    </text>
+                    <text className={styles['record-item-duration']}>{runningRecordItem.speed}</text>
+                  </view>
+                  <view className={styles['record-item-right']}>
+                    {runningRecordItem.ranking && `NO.${runningRecordItem.ranking}`}
+                  </view>
+                </>
+              );
+              return runningRecordItem.ranking ? (
+                <Panel.OutlineGreen.Zero key={key} className={styles['record-item']} width="694rpx" height="100rpx">
+                  {inner}
+                </Panel.OutlineGreen.Zero>
+              ) : (
+                <Panel.OutlineGray.One key={key} className={styles['record-item']} width="694rpx" height="100rpx">
+                  {inner}
+                </Panel.OutlineGray.One>
+              );
+            })
+          ) : (
+            <view>
+              {state.distributedRunningRecords.map((item, key) => (
                 <view className={styles['record-gird-group']} key={key}>
                   <view className={styles['record-grid-group-title']}>{item.month}月</view>
                   <view className={styles['record-grid']}>
@@ -273,12 +267,10 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
                     })}
                   </view>
                 </view>
-              ))
-            ) : (
-              <img className={styles['record-empty']} src={empty} />
-            )}
-          </view>
-        )}
+              ))}
+            </view>
+          )}
+        </view>
       </view>
     </view>
   );
@@ -294,44 +286,48 @@ function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
       </view>
       <view className={styles['rank-board-container']}>
         <ScrollView>
-          {rankList?.length
-            ? rankList.map((rankItem, key) => (
-                // eslint-disable-next-line react/jsx-indent
-                <view key={key} className={styles['rank-board-item']}>
-                  <view className={styles['rank-board-item-sub']}>
-                    <view className={styles['rank-board-item-ranking']}>{rankItem.rank}</view>
-                    <view className={styles['rank-board-avatar-wrapper']}>
-                      <Avatar src={rankItem.avatarBase64Encode} size="80rpx" />
-                    </view>
-                    <view className={styles['rank-board-item-info']}>
-                      <view className={styles['rank-board-item-name']}>{rankItem.username}</view>
-                      <view className={styles['rank-board-item-duration']}>
-                        {formatTime(rankItem.startAt)}
-                        {'-'}
-                        {formatTime(rankItem.endAt)}
-                      </view>
-                    </view>
+          {rankList?.length ? (
+            rankList.map((rankItem, key) => (
+              // eslint-disable-next-line react/jsx-indent
+              <view key={key} className={styles['rank-board-item']}>
+                <view className={styles['rank-board-item-sub']}>
+                  <view className={styles['rank-board-item-ranking']}>{rankItem.rank}</view>
+                  <view className={styles['rank-board-avatar-wrapper']}>
+                    <Avatar src={rankItem.avatarBase64Encode} size="80rpx" />
                   </view>
-                  <view className={styles['rank-board-item-sub']}>
-                    <view className={styles['rank-board-item-speed']}>
-                      {formatSpeed(rankItem.endAt - rankItem.startAt)}
-                    </view>
-                    <view
-                      className={styles['rank-board-item-like']}
-                      onClick={() => {
-                        dispatch({
-                          type: duck.types.SEND_LIKE_CHECK_IN,
-                          payload: { checkInID: rankItem.id, isLike: !rankItem.isLike },
-                        });
-                      }}
-                    >
-                      {rankItem.isLike ? <Icon.CowRed /> : <Icon.CowGray />}
-                      <view>{rankItem.likeCount}</view>
+                  <view className={styles['rank-board-item-info']}>
+                    <view className={styles['rank-board-item-name']}>{rankItem.username}</view>
+                    <view className={styles['rank-board-item-duration']}>
+                      {formatTime(rankItem.startAt)}
+                      {'-'}
+                      {formatTime(rankItem.endAt)}
                     </view>
                   </view>
                 </view>
-              ))
-            : null}
+                <view className={styles['rank-board-item-sub']}>
+                  <view className={styles['rank-board-item-speed']}>
+                    {formatSpeed(rankItem.endAt - rankItem.startAt)}
+                  </view>
+                  <view
+                    className={styles['rank-board-item-like']}
+                    onClick={() => {
+                      dispatch({
+                        type: duck.types.SEND_LIKE_CHECK_IN,
+                        payload: { checkInID: rankItem.id, isLike: !rankItem.isLike },
+                      });
+                    }}
+                  >
+                    {rankItem.isLike ? <Icon.CowRed /> : <Icon.CowGray />}
+                    <view>{rankItem.likeCount}</view>
+                  </view>
+                </view>
+              </view>
+            ))
+          ) : (
+            <view className={styles['empty-text']}>
+              <text>暂无记录</text>
+            </view>
+          )}
         </ScrollView>
       </view>
       {todayCheckIn ? (
@@ -372,34 +368,42 @@ function HomeHistoryRecordModal({ dispatch, store, duck }: DuckProps<HomeDuck>) 
         <view>历史记录</view>
       </view>
       <view className={styles['history-list']}>
-        {historyRecord.map((item, key) => {
-          const innner = (
-            <>
-              <view className={styles['history-list-item-content']}>
-                <view>
-                  <view className={styles['history-list-item-annual']}>
-                    {`${item.academicYear}-${item.academicYear + 1}`}
+        {historyRecord.length ? (
+          historyRecord.map((item, key) => {
+            const innner = (
+              <>
+                <view className={styles['history-list-item-content']}>
+                  <view>
+                    <view className={styles['history-list-item-annual']}>
+                      {`${item.academicYear}-${item.academicYear + 1}`}
+                    </view>
+                    <view className={styles['history-list-item-term']}>
+                      第{numToChineseCharacter(item.semester)}学期
+                    </view>
                   </view>
-                  <view className={styles['history-list-item-term']}>第{numToChineseCharacter(item.semester)}学期</view>
+                  <view className={styles['history-list-item-count-wrapper']}>
+                    <text className={styles['history-list-item-count']}>{item.currentCount}</text>
+                    <text>次</text>
+                  </view>
                 </view>
-                <view className={styles['history-list-item-count-wrapper']}>
-                  <text className={styles['history-list-item-count']}>{item.currentCount}</text>
-                  <text>次</text>
-                </view>
-              </view>
-            </>
-          );
+              </>
+            );
 
-          return item.isPass ? (
-            <Panel.OutlineGreen.Zero key={key} className={styles['history-list-item']} height="108rpx" width="588rpx">
-              {innner}
-            </Panel.OutlineGreen.Zero>
-          ) : (
-            <Panel.OutlineGray.Zero key={key} className={styles['history-list-item']} height="108rpx" width="588rpx">
-              {innner}
-            </Panel.OutlineGray.Zero>
-          );
-        })}
+            return item.isPass ? (
+              <Panel.OutlineGreen.Zero key={key} className={styles['history-list-item']} height="108rpx" width="588rpx">
+                {innner}
+              </Panel.OutlineGreen.Zero>
+            ) : (
+              <Panel.OutlineGray.Zero key={key} className={styles['history-list-item']} height="108rpx" width="588rpx">
+                {innner}
+              </Panel.OutlineGray.Zero>
+            );
+          })
+        ) : (
+          <view className={styles['empty-text']}>
+            <text>暂无记录</text>
+          </view>
+        )}
       </view>
     </view>
   );

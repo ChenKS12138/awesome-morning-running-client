@@ -4,7 +4,7 @@ import { select, fork, put, call } from 'redux-saga/effects';
 
 import * as model from '@/utils/model';
 import { LoadingDuck } from '@/ducks';
-import { enchanceTakeLatest } from '@/utils/effects';
+import { enchanceTakeLatest as takeLatest } from '@/utils/effects';
 
 export default class LoginDuck extends Duck {
   get quickTypes() {
@@ -54,11 +54,11 @@ export default class LoginDuck extends Duck {
   }
   *saga() {
     yield fork([this, this.watchToBind]);
+    yield put({ type: this.types.FETCH_USER_BIND });
   }
   *watchToBind() {
     const { types, selectors, ducks } = this;
-    yield enchanceTakeLatest([types.FETCH_USER_BIND], function* () {
-      console.log('handle user bind');
+    yield takeLatest([types.FETCH_USER_BIND], function* () {
       const { grade, studentID, username, isFormValidate } = selectors(yield select());
       if (isFormValidate) {
         yield put({ type: ducks.loading.types.WAIT });
@@ -75,6 +75,5 @@ export default class LoginDuck extends Duck {
         }
       }
     });
-    yield put({ type: types.FETCH_USER_BIND });
   }
 }

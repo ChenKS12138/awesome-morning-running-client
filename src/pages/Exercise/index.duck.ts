@@ -1,8 +1,8 @@
 import { reduceFromPayload, createToPayload, Duck } from '@/utils/duck';
-import { LocationDuck, TimerDuck } from '@/ducks';
-import { parseSecondTime, matcher, showModal } from '@/utils';
-import { EXERCISE_STATUS, CHECK_IN_STATUS } from '@/utils/constants';
-import { put, select, fork, call } from 'redux-saga/effects';
+import { LocationDuck, TimerDuck, LoadingDuck } from '@/ducks';
+import { parseSecondTime, matcher, showModal, parseQrCodeSence } from '@/utils';
+import { EXERCISE_STATUS, CHECK_IN_STATUS, VALID_SCENE_EVENT, VALID_SCENE_TYPE } from '@/utils/constants';
+import { put, select, fork } from 'redux-saga/effects';
 import { IUserInfo, ICheckIn } from '@/utils/interface';
 import {
   requestUserInfo,
@@ -11,7 +11,8 @@ import {
   requestCheckInStart,
   requestCheckInEnd,
 } from '@/utils/model';
-import { waitForModalHidden, enchanceTakeLatest as takeLatest } from '@/utils/effects';
+import { waitForModalHidden, enchanceTakeLatest as takeLatest, scanCode } from '@/utils/effects';
+import { getSearchParams } from 'rax-app';
 
 export default class ExerciseDuck extends Duck {
   get quickTypes() {
@@ -31,6 +32,8 @@ export default class ExerciseDuck extends Duck {
       FETCH_CHECKIN_END,
 
       LOAD_FINISH_PAGE,
+
+      SCAN_QR_CODE,
     }
     return {
       ...super.quickTypes,
@@ -82,50 +85,61 @@ export default class ExerciseDuck extends Duck {
       ...super.quickDucks,
       location: LocationDuck,
       timer: TimerDuck,
+      loading: LoadingDuck,
     };
   }
   *saga() {
-    yield fork([this, this.watchPluseToChangeDurationAndLocation]);
     yield fork([this, this.watchToFetchUserInfo]);
     yield fork([this, this.watchUsedTimeToChangeExerciseStatus]);
     yield fork([this, this.watchMotionToSendMotion]);
     yield fork([this, this.watchToLoadFinishPage]);
     yield fork([this, this.watchToFetchCheckInEnd]);
     yield fork([this, this.watchPageReload]);
+    yield fork([this, this.watchExerciseStatus]);
+    yield fork([this, this.watchTimePluse]);
   }
   *watchPageReload() {
     const duck = this;
     const { types, ducks } = duck;
     yield takeLatest([types.PAGE_RELOAD], function* () {
-      try {
-        const todayCheckIn: ICheckIn | null = yield call(requestCheckInToday);
-        if (todayCheckIn?.status === CHECK_IN_STATUS.IN_TIME_FINISH) {
-          yield put({ type: types.SET_EXERCISE_STATUS, payload: EXERCISE_STATUS.FINISH });
-        } else {
-          if (!todayCheckIn) {
-            yield call(requestCheckInStart);
-          }
-          yield put({
-            type: types.SET_START_AT,
-            payload: todayCheckIn?.startAt ?? Date.now(),
-          });
-          yield put({ type: ducks.timer.types.ACTIVATE });
-        }
-      } catch (_e) {
-        yield waitForModalHidden();
-        wx.redirectTo({
-          url: '/pages/Home/index',
-        });
-      }
-    });
-    yield takeLatest([types.PAGE_RELOAD], function* () {
       yield put({ type: types.FETCH_USER_INFO });
+      const scene = parseQrCodeSence(getSearchParams()?.scene as string | undefined);
+      if (scene?.event === VALID_SCENE_EVENT.CHECK_IN && scene?.type === VALID_SCENE_TYPE.END) {
+        yield put({ type: types.FETCH_CHECKIN_END });
+      } else {
+        try {
+          const todayCheckIn: ICheckIn | null = yield ducks.loading.call(requestCheckInToday);
+          if (todayCheckIn?.status === CHECK_IN_STATUS.IN_TIME_FINISH) {
+            yield put({ type: types.SET_EXERCISE_STATUS, payload: EXERCISE_STATUS.FINISH });
+          } else {
+            if (!todayCheckIn) {
+              if (scene?.event === VALID_SCENE_EVENT.CHECK_IN && scene?.type === VALID_SCENE_TYPE.START) {
+                yield ducks.loading.call(requestCheckInStart);
+              } else {
+                wx.redirectTo({
+                  url: '/pages/Home/index',
+                });
+              }
+            }
+            yield put({
+              type: types.SET_START_AT,
+              payload: todayCheckIn?.startAt ?? Date.now(),
+            });
+            yield put({ type: ducks.timer.types.ACTIVATE });
+          }
+        } catch (_e) {
+          yield waitForModalHidden();
+          wx.redirectTo({
+            url: '/pages/Home/index',
+          });
+        }
+      }
     });
   }
   *watchToLoadFinishPage() {
     const { types, ducks } = this;
     yield takeLatest([types.LOAD_FINISH_PAGE], function* () {
-      const todayCheckIn: ICheckIn = yield call(requestCheckInToday);
+      const todayCheckIn: ICheckIn = yield ducks.loading.call(requestCheckInToday);
       yield put({
         type: types.SET_TODAY_CHECK_IN,
         payload: todayCheckIn,
@@ -138,6 +152,9 @@ export default class ExerciseDuck extends Duck {
         type: ducks.location.types.FETCH_LOCATION,
       });
     });
+  }
+  *watchExerciseStatus() {
+    const { types, ducks } = this;
     yield takeLatest([types.SET_EXERCISE_STATUS], function* (action: any) {
       const exerStatus: EXERCISE_STATUS = action.payload;
       if (exerStatus === EXERCISE_STATUS.FINISH) {
@@ -146,20 +163,18 @@ export default class ExerciseDuck extends Duck {
       }
     });
   }
-  *watchPluseToChangeDurationAndLocation() {
+  *watchTimePluse() {
     const { types, ducks, selectors } = this;
     yield takeLatest([ducks.timer.types.PULSE], function* () {
+      yield put({
+        type: ducks.location.types.FETCH_LOCATION,
+      });
       const now = Date.now();
       const { startAt } = selectors(yield select());
       const duration = Math.round((now - startAt) / 1000);
       yield put({
         type: types.SET_USED_TIME,
         payload: duration,
-      });
-    });
-    yield takeLatest([ducks.timer.types.PULSE], function* () {
-      yield put({
-        type: ducks.location.types.FETCH_LOCATION,
       });
     });
   }
@@ -192,10 +207,10 @@ export default class ExerciseDuck extends Duck {
     });
   }
   *watchToFetchCheckInEnd() {
-    const { types } = this;
+    const { types, ducks } = this;
     yield takeLatest([types.FETCH_CHECKIN_END], function* () {
       try {
-        const checkIn: ICheckIn = yield call(requestCheckInEnd);
+        const checkIn: ICheckIn = yield ducks.loading.call(requestCheckInEnd);
         if (checkIn?.status === CHECK_IN_STATUS.OVERTIME_FINISH) {
           showModal({
             title: '超时',
@@ -235,6 +250,12 @@ export default class ExerciseDuck extends Duck {
       if (todayCheckIn?.id) {
         yield requestCheckInMotion({ motion, checkInID: todayCheckIn?.id });
       }
+    });
+  }
+  *watchToScanQrCode() {
+    yield scanCode({
+      onlyFromCamera: true,
+      scanType: ['qrCode'],
     });
   }
 }

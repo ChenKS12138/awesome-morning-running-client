@@ -1,6 +1,7 @@
 import { isWeChatMiniProgram } from 'universal-env';
 import { RunningRecord } from './interface';
 import { waitForModalHidden } from './effects';
+import { VALID_SENCE } from './constants';
 
 /**
  * @param {string[]} classnames
@@ -157,4 +158,15 @@ export function showModal(config) {
       config?.complete?.(result);
     },
   });
+}
+
+export function parseQrCodeSence(scene: string | undefined) {
+  if (!scene) return null;
+  const [event, type, secret] = scene.split('$');
+  if (!event || !type || !secret) return null;
+  const validSence = Object.keys(VALID_SENCE);
+  if (!validSence.includes(event)) return null;
+  const validTypes = VALID_SENCE[event];
+  if (!validTypes.includes(type)) return null;
+  return { event, type, secret };
 }

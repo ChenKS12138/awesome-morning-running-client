@@ -150,13 +150,8 @@ export default class HomeDuck extends Duck {
   *watchToFetchUserInfo() {
     const { types, ducks } = this;
     yield takeLatest([types.FETCH_USER_INFO], function* () {
-      yield put({ type: ducks.loading.types.WAIT });
-      try {
-        const userInfo: IUserInfo = yield call(requestUserInfo);
-        yield put({ type: types.SET_USER_INFO, payload: userInfo });
-      } finally {
-        yield put({ type: ducks.loading.types.DONE });
-      }
+      const userInfo: IUserInfo = yield ducks.loading.call(requestUserInfo);
+      yield put({ type: types.SET_USER_INFO, payload: userInfo });
     });
   }
   *watchToSendUserAvatar() {
@@ -170,93 +165,63 @@ export default class HomeDuck extends Duck {
   *watchToFetchRankToday() {
     const { types, ducks } = this;
     yield takeLatest([types.FETCH_CHECK_IN_RANK_TODAY], function* () {
-      yield put({ type: ducks.loading.types.WAIT });
-      try {
-        const checkIns: IRankToday[] = yield call(requestCheckInRankToday);
-        yield put({
-          type: types.SET_RANK_LIST,
-          payload: checkIns ?? [],
-        });
-      } finally {
-        yield put({ type: ducks.loading.types.DONE });
-      }
+      const checkIns: IRankToday[] = yield ducks.loading.call(requestCheckInRankToday);
+      yield put({
+        type: types.SET_RANK_LIST,
+        payload: checkIns ?? [],
+      });
     });
   }
   *watchToFetchUserHistory() {
     const { types, ducks } = this;
     yield takeLatest([types.FETCH_USER_HISTORY], function* () {
-      yield put({ type: ducks.loading.types.WAIT });
-      try {
-        const semesterCheckIns: ISemesterCheckIn[] = yield call(requestUserHistory);
-        yield put({ type: types.SET_HISTORY_RECORD, payload: semesterCheckIns ?? [] });
-      } finally {
-        yield put({ type: ducks.loading.types.DONE });
-      }
+      const semesterCheckIns: ISemesterCheckIn[] = yield ducks.loading.call(requestUserHistory);
+      yield put({ type: types.SET_HISTORY_RECORD, payload: semesterCheckIns ?? [] });
     });
   }
   *watchToFetchCheckInHistory() {
     const { types, ducks } = this;
     yield takeLatest([types.FETCH_CHECK_IN_HISTORY], function* () {
-      yield put({ type: ducks.loading.types.WAIT });
-      try {
-        const checkIns: ICheckIn[] = (yield call(requestCheckInHistory)) ?? [];
-        const runningRecords: RunningRecord[] = checkIns.map((checkIn) => {
-          const [year, month, day] = checkIn.dateTag.split('-');
-          const duration = parseSecondTime((checkIn.endAt - checkIn.startAt) / 1000);
-          return {
-            mood: checkIn.motion,
-            year: Number.parseInt(year, 10),
-            month: Number.parseInt(month, 10),
-            day: Number.parseInt(day, 10),
-            ranking: checkIn.rank,
-            speed: `${duration.minutes}'${duration.seconds.toString().padStart(2, '0')}''`,
-          };
-        });
-        yield put({
-          type: types.SET_RUNNING_RECORD,
-          payload: runningRecords ?? [],
-        });
-      } finally {
-        yield put({ type: ducks.loading.types.DONE });
-      }
+      const checkIns: ICheckIn[] = (yield ducks.loading.call(requestCheckInHistory)) ?? [];
+      const runningRecords: RunningRecord[] = checkIns.map((checkIn) => {
+        const [year, month, day] = checkIn.dateTag.split('-');
+        const duration = parseSecondTime((checkIn.endAt - checkIn.startAt) / 1000);
+        return {
+          mood: checkIn.motion,
+          year: Number.parseInt(year, 10),
+          month: Number.parseInt(month, 10),
+          day: Number.parseInt(day, 10),
+          ranking: checkIn.rank,
+          speed: `${duration.minutes}'${duration.seconds.toString().padStart(2, '0')}''`,
+        };
+      });
+      yield put({
+        type: types.SET_RUNNING_RECORD,
+        payload: runningRecords ?? [],
+      });
     });
   }
   *watchToLikeCheckIn() {
     const { types, ducks } = this;
     yield takeLatest([types.SEND_LIKE_CHECK_IN], function* (action: any) {
       const { checkInID, isLike } = action.payload;
-      yield put({ type: ducks.loading.types.WAIT });
-      try {
-        yield call(requestCheckInLike, { checkInID, isLike });
-        yield put({ type: types.FETCH_CHECK_IN_RANK_TODAY });
-      } finally {
-        yield put({ type: ducks.loading.types.DONE });
-      }
+      yield ducks.loading.call(requestCheckInLike, { checkInID, isLike });
+      yield put({ type: types.FETCH_CHECK_IN_RANK_TODAY });
     });
   }
   *watchToUnbindUser() {
     const { types, ducks } = this;
     yield takeLatest([types.SEND_USER_UNBIND], function* () {
-      yield put({ type: ducks.loading.types.WAIT });
-      try {
-        yield call(requestUserUnbind);
-        wx.clearStorageSync();
-      } finally {
-        yield put({ type: ducks.loading.types.DONE });
-      }
+      yield ducks.loading.call(requestUserUnbind);
+      wx.clearStorageSync();
       yield put({ type: types.PAGE_RELOAD });
     });
   }
   *watchToFetchCheckInToday() {
     const { types, ducks } = this;
     yield takeLatest([types.FETCH_CHECK_IN_TODAY], function* () {
-      yield put({ type: ducks.loading.types.WAIT });
-      try {
-        const checkInToday = yield call(requestCheckInToday);
-        yield put({ type: types.SET_CHECK_IN_TODAY, payload: checkInToday });
-      } finally {
-        yield put({ type: ducks.loading.types.DONE });
-      }
+      const checkInToday = yield ducks.loading.call(requestCheckInToday);
+      yield put({ type: types.SET_CHECK_IN_TODAY, payload: checkInToday });
     });
   }
 }

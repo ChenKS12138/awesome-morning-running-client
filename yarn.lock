@@ -10554,6 +10554,11 @@ rax-text@^2.0.0:
   dependencies:
     universal-env "^3.0.0"
 
+rax-use-mounted@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npm.taobao.org/rax-use-mounted/download/rax-use-mounted-1.0.0.tgz#3e8f11ec11c2a0d543b464547031fe0c10381448"
+  integrity sha1-Po8R7BHCoNVDtGRUcDH+DBA4FEg=
+
 rax-use-router@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npm.taobao.org/rax-use-router/download/rax-use-router-3.0.0.tgz#47abc2205050794a2c94dbe70a774cd814b7097f"

@@ -1,6 +1,8 @@
+import { createElement, useEffect } from 'rax';
+
 import { LocationDuck } from '@/ducks';
 import { useDuckState, DuckProps } from '@/utils/duck';
-import { createElement, useEffect } from 'rax';
+
 import { Statistic, Button, Divider, Icon, Panel } from '@/components';
 
 import ExerciseDuck from './index.duck';
@@ -116,7 +118,7 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
               <Button
                 onClick={() => {
                   dispatch({
-                    type: duck.types.FETCH_CHECKIN_END,
+                    type: duck.types.SCAN_QR_CODE,
                   });
                 }}
                 color={matcher([

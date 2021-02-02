@@ -1,5 +1,5 @@
 import { Duck, reduceFromPayload } from '@/utils/duck';
-import { takeLatest, fork, select, put, delay } from 'redux-saga/effects';
+import { fork, select, put, delay, call, takeEvery } from 'redux-saga/effects';
 
 export default class PageDuck extends Duck {
   get quickTypes() {
@@ -32,7 +32,7 @@ export default class PageDuck extends Duck {
   }
   *watchLoaingSemephoreChange() {
     const { types, selectors } = this;
-    yield takeLatest([types.WAIT], function* () {
+    yield takeEvery([types.WAIT], function* () {
       const { semaphore } = selectors(yield select());
       if (semaphore === 0) {
         wx.showLoading({
@@ -41,7 +41,7 @@ export default class PageDuck extends Duck {
       }
       yield put({ type: types.SET_SEMAPHORE, payload: semaphore + 1 });
     });
-    yield takeLatest([types.DONE], function* () {
+    yield takeEvery([types.DONE], function* () {
       const { semaphore } = selectors(yield select());
       if (semaphore === 1) {
         yield delay(500);
@@ -50,4 +50,15 @@ export default class PageDuck extends Duck {
       yield put({ type: types.SET_SEMAPHORE, payload: semaphore - 1 });
     });
   }
+  call = (caller, ...args) => {
+    const loadingDuck = this;
+    return (function* () {
+      yield put({ type: loadingDuck.types.WAIT });
+      try {
+        return yield call(caller, ...args);
+      } finally {
+        yield put({ type: loadingDuck.types.DONE });
+      }
+    })();
+  };
 }

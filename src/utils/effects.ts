@@ -1,5 +1,5 @@
 import Observer from './observer';
-import { take, cancel, call } from 'redux-saga/effects';
+import { fork, take, cancel, call } from 'redux-saga/effects';
 
 const modalHidden = {
   _semaphore: 0,
@@ -29,17 +29,49 @@ const modalHidden = {
 
 export const waitForModalHidden = modalHidden.waitForModalHiddenEffect.bind(modalHidden);
 
-export function* enchanceTakeLatest(pattern: any[], saga: any) {
-  let lastTask;
-  while (true) {
-    const action = yield take(pattern);
-    if (lastTask) {
-      yield cancel(lastTask);
-    }
-    try {
-      lastTask = yield call(saga as any, action);
-    } catch (e) {
-      console.error(String(e));
-    }
-  }
+export function scanCode(config) {
+  return new Promise((resolve, reject) => {
+    wx.scanCode({
+      ...config,
+      success(result) {
+        config?.success?.(result);
+        resolve(result);
+      },
+      fail(reason) {
+        config?.fail?.(reason);
+        reject(reason);
+      },
+    });
+  });
+}
+
+export function enchanceTakeLatest(pattern: any[], saga: any) {
+  return (function* () {
+    yield (function* () {
+      const env = {
+        lastTask: null,
+      };
+      while (true) {
+        const action = yield take(pattern);
+        if (env.lastTask) {
+          yield cancel(env.lastTask as any);
+        }
+        env.lastTask = yield fork(
+          function* (currentAction, currentEnv) {
+            try {
+              yield call(saga, currentAction);
+            } catch (e) {
+              console.error(String(e));
+            } finally {
+              if (currentEnv?.lastTask) {
+                currentEnv.lastTask = null;
+              }
+            }
+          },
+          action,
+          env,
+        );
+      }
+    })();
+  })();
 }
