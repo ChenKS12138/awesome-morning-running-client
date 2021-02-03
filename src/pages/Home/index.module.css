@@ -47,8 +47,18 @@
   border: none;
 }
 
-/* record */
-.record-title {
+.action-container {
+}
+
+.action-content {
+  display: grid;
+  place-items: center;
+  padding-top: 30rpx;
+  padding-bottom: 20rpx;
+  color: white;
+}
+
+.common-title {
   display: flex;
   width: 684rpx;
   justify-content: space-between;
@@ -56,6 +66,8 @@
   font-size: 32rpx;
   margin-top: 30rpx;
 }
+
+/* record */
 .record-list {
   margin-top: 28rpx;
   padding-bottom: 28rpx;

@@ -10,13 +10,14 @@ import {
   Modal,
   Avatar,
   LoadingHover,
+  Button,
 } from '@/components';
-import { numToChineseCharacter, composeClassnames, parseSecondTime } from '@/utils';
+import { numToChineseCharacter, composeClassnames, parseSecondTime, matcher } from '@/utils';
 import { useDuckState, DuckProps } from '@/utils/duck';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
-import { RUNNING_RECORD_DISPLAY_MODAL } from '@/utils/constants';
+import { RUNNING_RECORD_DISPLAY_MODAL, CHECK_IN_STATUS } from '@/utils/constants';
 import { empty } from '@/assets';
 
 export default Home;
@@ -76,6 +77,8 @@ function Home() {
             </view>
           </Panel.SolidGray.Zero>
         </view>
+        <Divider className={styles.divider} />
+        <HomeAction dispatch={dispatch} store={store} duck={duck} />
         <Divider className={styles.divider} />
         <HomeRecord dispatch={dispatch} store={store} duck={duck} />
         <Divider className={styles.divider} />
@@ -187,6 +190,75 @@ function HomeStatistic({ compensatoryCount, ranking, speed }: IHomeStatistic) {
  * Home Page DuckComponents
  */
 
+function HomeAction({ dispatch, duck, store }: DuckProps<HomeDuck>) {
+  const { todayCheckIn } = duck.selectors(store);
+  return (
+    <view className={styles['action-container']}>
+      <view className={styles['common-title']}>
+        <text>今日跑操</text>
+      </view>
+      <view className={styles['action-content']}>
+        {matcher([
+          {
+            condition: null,
+            handler: (
+              <Button
+                color={Button.colors.GREEN}
+                onClick={() => {
+                  dispatch({ type: duck.types.SCAN_QR_CODE });
+                }}
+                width="628rpx"
+              >
+                <text>立即跑操</text>
+              </Button>
+            ),
+          },
+          {
+            condition: () => true,
+            handler: (checkIn) =>
+              matcher([
+                {
+                  condition: (item) => item.status === CHECK_IN_STATUS.RUNNING,
+                  handler: (
+                    <Button
+                      color={Button.colors.ORANGE}
+                      onClick={() => {
+                        dispatch({
+                          type: duck.ducks.router.types.REDIRECT_TO,
+                          payload: { url: '/pages/Exercise/index' },
+                        });
+                      }}
+                      width="628rpx"
+                    >
+                      <text>返回跑操详情</text>
+                    </Button>
+                  ),
+                },
+                {
+                  condition: () => true,
+                  handler: (
+                    <Button
+                      color={Button.colors.GRAY}
+                      onClick={() => {
+                        dispatch({
+                          type: duck.ducks.router.types.REDIRECT_TO,
+                          payload: { url: '/pages/Exercise/index' },
+                        });
+                      }}
+                      width="628rpx"
+                    >
+                      <text>查看今日跑操</text>
+                    </Button>
+                  ),
+                },
+              ])(checkIn),
+          },
+        ])(todayCheckIn)}
+      </view>
+    </view>
+  );
+}
+
 function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
   const state = duck.selectors(store);
   const handleDisplayModalClick = useCallback(() => {
@@ -197,7 +269,7 @@ function HomeRecord({ dispatch, duck, store }: DuckProps<HomeDuck>) {
 
   return (
     <view className={styles.record}>
-      <view className={styles['record-title']}>
+      <view className={styles['common-title']}>
         <text>跑操记录</text>
         <view x-if={state.distributedRunningRecords.length} onClick={handleDisplayModalClick}>
           {state.runningRecordDisplayMode === RUNNING_RECORD_DISPLAY_MODAL.LIST ? <Icon.GridMode /> : <Icon.ListMode />}

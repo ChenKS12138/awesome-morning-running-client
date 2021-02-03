@@ -1,5 +1,5 @@
 import { reduceFromPayload, createToPayload, Duck } from '@/utils/duck';
-import { LocationDuck, TimerDuck, LoadingDuck } from '@/ducks';
+import { LocationDuck, TimerDuck, LoadingDuck, RouterDuck } from '@/ducks';
 import { parseSecondTime, matcher, showModal, parseQrCodeSence } from '@/utils';
 import { EXERCISE_STATUS, CHECK_IN_STATUS, VALID_SCENE_EVENT, VALID_SCENE_TYPE } from '@/utils/constants';
 import { put, select, fork } from 'redux-saga/effects';
@@ -86,6 +86,7 @@ export default class ExerciseDuck extends Duck {
       location: LocationDuck,
       timer: TimerDuck,
       loading: LoadingDuck,
+      router: RouterDuck,
     };
   }
   *saga() {
@@ -97,6 +98,7 @@ export default class ExerciseDuck extends Duck {
     yield fork([this, this.watchPageReload]);
     yield fork([this, this.watchExerciseStatus]);
     yield fork([this, this.watchTimePluse]);
+    yield fork([this, this.watchToScanQrCode]);
   }
   *watchPageReload() {
     const duck = this;
@@ -116,9 +118,7 @@ export default class ExerciseDuck extends Duck {
               if (scene?.event === VALID_SCENE_EVENT.CHECK_IN && scene?.type === VALID_SCENE_TYPE.START) {
                 yield ducks.loading.call(requestCheckInStart);
               } else {
-                wx.redirectTo({
-                  url: '/pages/Home/index',
-                });
+                yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
               }
             }
             yield put({
@@ -129,9 +129,7 @@ export default class ExerciseDuck extends Duck {
           }
         } catch (_e) {
           yield waitForModalHidden();
-          wx.redirectTo({
-            url: '/pages/Home/index',
-          });
+          yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
         }
       }
     });
@@ -227,16 +225,14 @@ export default class ExerciseDuck extends Duck {
         }
       } catch (_e) {
         yield waitForModalHidden();
-        wx.redirectTo({
-          url: '/pages/Home/index',
-        });
+        yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
       }
     });
   }
   *watchToFetchUserInfo() {
-    const { types } = this;
+    const { types, ducks } = this;
     yield takeLatest([types.FETCH_USER_INFO], function* () {
-      const userInfo: IUserInfo = yield requestUserInfo();
+      const userInfo: IUserInfo = yield ducks.loading.call(requestUserInfo);
       yield put({
         type: types.SET_USER_INFO,
         payload: userInfo,
@@ -244,18 +240,27 @@ export default class ExerciseDuck extends Duck {
     });
   }
   *watchMotionToSendMotion() {
-    const { types, selectors } = this;
+    const { types, selectors, ducks } = this;
     yield takeLatest([types.SET_MOTION], function* () {
       const { motion, todayCheckIn } = selectors(yield select());
       if (todayCheckIn?.id) {
-        yield requestCheckInMotion({ motion, checkInID: todayCheckIn?.id });
+        yield ducks.loading.call(requestCheckInMotion, { motion, checkInID: todayCheckIn?.id });
       }
     });
   }
   *watchToScanQrCode() {
-    yield scanCode({
-      onlyFromCamera: true,
-      scanType: ['qrCode'],
+    const { types, ducks } = this;
+    yield takeLatest([types.SCAN_QR_CODE], function* () {
+      const result = yield scanCode({
+        onlyFromCamera: true,
+        scanType: ['qrCode'],
+      });
+      if (result?.errMsg === 'scanCode:ok' && result?.path) {
+        const url = String(result.path).startsWith('/') ? result.path : '/' + result.path;
+        yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url } });
+      } else {
+        wx.showToast({ title: '扫码失败' });
+      }
     });
   }
 }

@@ -1,6 +1,6 @@
 import { isWeChatMiniProgram } from 'universal-env';
 import { RunningRecord } from './interface';
-import { waitForModalHidden } from './effects';
+import { modalHidden } from './effects';
 import { VALID_SENCE } from './constants';
 
 /**
@@ -150,11 +150,11 @@ export async function getUriBase64Encode(uri: string): Promise<string> {
 }
 
 export function showModal(config) {
-  (waitForModalHidden as any).semaphore += 1;
+  (modalHidden as any).semaphore += 1;
   return wx.showModal({
     ...config,
     complete(result) {
-      (waitForModalHidden as any).semaphore -= 1;
+      (modalHidden as any).semaphore -= 1;
       config?.complete?.(result);
     },
   });

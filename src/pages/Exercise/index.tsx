@@ -247,9 +247,7 @@ function ExerciseInfoFinish({ dispatch, duck, store }: DuckProps<ExerciseDuck>) 
           color={Button.colors.GREEN}
           width="452rpx"
           onClick={() => {
-            wx.redirectTo({
-              url: '/pages/Home/index',
-            });
+            dispatch({ type: duck.ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
           }}
         >
           <text className={styles['button-text']}>完成</text>

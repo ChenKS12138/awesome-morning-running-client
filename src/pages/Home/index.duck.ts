@@ -13,8 +13,8 @@ import {
   requestCheckInToday,
 } from '@/utils/model';
 import { IUserInfo, ICheckIn, IRankToday, ISemesterCheckIn, RunningRecord } from '@/utils/interface';
-import { LoadingDuck } from '@/ducks';
-import { enchanceTakeLatest as takeLatest } from '@/utils/effects';
+import { LoadingDuck, RouterDuck } from '@/ducks';
+import { enchanceTakeLatest as takeLatest, scanCode } from '@/utils/effects';
 
 export default class HomeDuck extends Duck {
   get quickTypes() {
@@ -43,6 +43,8 @@ export default class HomeDuck extends Duck {
       SEND_USER_UNBIND,
       SET_CHECK_IN_TODAY,
       FETCH_CHECK_IN_TODAY,
+
+      SCAN_QR_CODE,
     }
     return {
       ...super.quickTypes,
@@ -90,6 +92,7 @@ export default class HomeDuck extends Duck {
     return {
       ...super.quickDucks,
       loading: LoadingDuck,
+      router: RouterDuck,
     };
   }
   *saga() {
@@ -106,12 +109,14 @@ export default class HomeDuck extends Duck {
     yield fork([this, this.watchToLoadPage]);
     yield fork([this, this.watchToUnbindUser]);
     yield fork([this, this.watchToFetchCheckInToday]);
+    yield fork([this, this.watchToScanQrCode]);
   }
   *watchToLoadPage() {
     const { types } = this;
     yield takeLatest([types.PAGE_RELOAD], function* () {
       yield put({ type: types.FETCH_USER_INFO });
       yield put({ type: types.FETCH_CHECK_IN_HISTORY });
+      yield put({ type: types.FETCH_CHECK_IN_TODAY });
     });
   }
   *watchToShowRankList() {
@@ -222,6 +227,21 @@ export default class HomeDuck extends Duck {
     yield takeLatest([types.FETCH_CHECK_IN_TODAY], function* () {
       const checkInToday = yield ducks.loading.call(requestCheckInToday);
       yield put({ type: types.SET_CHECK_IN_TODAY, payload: checkInToday });
+    });
+  }
+  *watchToScanQrCode() {
+    const { types, ducks } = this;
+    yield takeLatest([types.SCAN_QR_CODE], function* () {
+      const result = yield scanCode({
+        onlyFromCamera: true,
+        scanType: ['qrCode'],
+      });
+      if (result?.errMsg === 'scanCode:ok' && result?.path) {
+        const url = String(result.path).startsWith('/') ? result.path : '/' + result.path;
+        yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url } });
+      } else {
+        wx.showToast({ title: '扫码失败' });
+      }
     });
   }
 }

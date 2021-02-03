@@ -1,7 +1,7 @@
 import Observer from './observer';
 import { fork, take, cancel, call } from 'redux-saga/effects';
 
-const modalHidden = {
+export const modalHidden = {
   _semaphore: 0,
   _observer: new Observer(),
   get semaphore() {
@@ -61,6 +61,8 @@ export function enchanceTakeLatest(pattern: any[], saga: any) {
             try {
               yield call(saga, currentAction);
             } catch (e) {
+              // eslint-disable-next-line @typescript-eslint/ban-tslint-comment
+              // tslint:disable-next-line
               console.error(String(e));
             } finally {
               if (currentEnv?.lastTask) {

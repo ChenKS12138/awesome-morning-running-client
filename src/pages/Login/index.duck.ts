@@ -3,7 +3,7 @@ import { getCurrentFreshmanGrade, getWxCode } from '@/utils';
 import { select, fork, put, call } from 'redux-saga/effects';
 
 import * as model from '@/utils/model';
-import { LoadingDuck } from '@/ducks';
+import { LoadingDuck, RouterDuck } from '@/ducks';
 import { enchanceTakeLatest as takeLatest } from '@/utils/effects';
 
 export default class LoginDuck extends Duck {
@@ -41,6 +41,7 @@ export default class LoginDuck extends Duck {
   get quickDucks() {
     return {
       loading: LoadingDuck,
+      router: RouterDuck,
     };
   }
   get creators() {
@@ -66,9 +67,7 @@ export default class LoginDuck extends Duck {
           const code = yield getWxCode();
           const result = yield call(model.requestUserBind, { grade, studentID, username, code });
           if (result) {
-            wx.redirectTo({
-              url: '/pages/Home/index',
-            });
+            yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
           }
         } finally {
           yield put({ type: ducks.loading.types.DONE });
