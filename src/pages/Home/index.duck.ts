@@ -234,13 +234,12 @@ export default class HomeDuck extends Duck {
     yield takeLatest([types.SCAN_QR_CODE], function* () {
       const result = yield scanCode({
         onlyFromCamera: true,
-        scanType: ['qrCode'],
       });
-      if (result?.errMsg === 'scanCode:ok' && result?.path) {
+      if (result?.scanType === 'WX_CODE' && result?.errMsg === 'scanCode:ok' && result?.path) {
         const url = String(result.path).startsWith('/') ? result.path : '/' + result.path;
         yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url } });
       } else {
-        wx.showToast({ title: '扫码失败' });
+        wx.showToast({ title: '扫码失败', icon: 'none' });
       }
     });
   }
