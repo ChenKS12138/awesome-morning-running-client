@@ -77,3 +77,22 @@ export function enchanceTakeLatest(pattern: any[], saga: any) {
     })();
   })();
 }
+
+export function enchanceTakeEvery(pattern: any[], saga: any) {
+  return (function* () {
+    yield (function* () {
+      while (true) {
+        const action = yield take(pattern);
+        yield fork(function* (currentAction) {
+          try {
+            yield call(saga, currentAction);
+          } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-tslint-comment
+            // tslint:disable-next-line
+            console.error(String(e));
+          }
+        }, action);
+      }
+    })();
+  })();
+}

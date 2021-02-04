@@ -118,7 +118,7 @@ function ExerciseInfo({ dispatch, duck, store }: DuckProps<ExerciseDuck>) {
               <Button
                 onClick={() => {
                   dispatch({
-                    type: duck.types.SCAN_QR_CODE,
+                    type: duck.ducks.scanCode.types.SCAN_QR_CODE,
                   });
                 }}
                 color={matcher([

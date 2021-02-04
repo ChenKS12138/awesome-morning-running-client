@@ -3,17 +3,24 @@
     {
       "path": "/",
       "source": "pages/Home/index",
-      "navigationBarTitleText": "晨跑"
+      "window": {
+        "title": "晨跑",
+        "pullRefresh": true
+      }
     },
     {
       "path": "/exercise",
       "source": "pages/Exercise/index",
-      "navigationBarTitleText": "晨跑"
+      "window": {
+        "title": "晨跑"
+      }
     },
     {
       "path": "/login",
       "source": "pages/Login/index",
-      "navigationBarTitleText": "登录"
+      "window": {
+        "title": "登录"
+      }
     }
   ],
   "window": {

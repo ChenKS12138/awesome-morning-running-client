@@ -13,8 +13,8 @@ import {
   requestCheckInToday,
 } from '@/utils/model';
 import { IUserInfo, ICheckIn, IRankToday, ISemesterCheckIn, RunningRecord } from '@/utils/interface';
-import { LoadingDuck, RouterDuck } from '@/ducks';
-import { enchanceTakeLatest as takeLatest, scanCode } from '@/utils/effects';
+import { LoadingDuck, RouterDuck, ScanCodeDuck } from '@/ducks';
+import { enchanceTakeLatest as takeLatest } from '@/utils/effects';
 
 export default class HomeDuck extends Duck {
   get quickTypes() {
@@ -28,23 +28,16 @@ export default class HomeDuck extends Duck {
       SET_RUNNING_RECORD_DISPLAY_MODE,
       SET_RUNNING_RECORD,
       SET_USER_INFO,
+      SET_CHECK_IN_TODAY,
 
       SHOW_RANK_LIST,
       SHOW_HISTORY_RECORD,
       HIDE_MODAL,
       TOGGLE_DISPLAY_MODE,
 
-      FETCH_USER_INFO,
-      FETCH_CHECK_IN_RANK_TODAY,
-      FETCH_USER_HISTORY,
       SEND_USER_AVATAR,
-      FETCH_CHECK_IN_HISTORY,
       SEND_LIKE_CHECK_IN,
       SEND_USER_UNBIND,
-      SET_CHECK_IN_TODAY,
-      FETCH_CHECK_IN_TODAY,
-
-      SCAN_QR_CODE,
     }
     return {
       ...super.quickTypes,
@@ -93,6 +86,7 @@ export default class HomeDuck extends Duck {
       ...super.quickDucks,
       loading: LoadingDuck,
       router: RouterDuck,
+      scanCode: ScanCodeDuck,
     };
   }
   *saga() {
@@ -100,37 +94,33 @@ export default class HomeDuck extends Duck {
     yield fork([this, this.watchToShowHistoryRecord]);
     yield fork([this, this.watchToHideModal]);
     yield fork([this, this.watchToToggleRecordDisplayMode]);
-    yield fork([this, this.watchToFetchUserInfo]);
     yield fork([this, this.watchToSendUserAvatar]);
-    yield fork([this, this.watchToFetchRankToday]);
-    yield fork([this, this.watchToFetchCheckInHistory]);
     yield fork([this, this.watchToLikeCheckIn]);
-    yield fork([this, this.watchToFetchUserHistory]);
     yield fork([this, this.watchToLoadPage]);
     yield fork([this, this.watchToUnbindUser]);
-    yield fork([this, this.watchToFetchCheckInToday]);
-    yield fork([this, this.watchToScanQrCode]);
   }
   *watchToLoadPage() {
-    const { types } = this;
-    yield takeLatest([types.PAGE_RELOAD], function* () {
-      yield put({ type: types.FETCH_USER_INFO });
-      yield put({ type: types.FETCH_CHECK_IN_HISTORY });
-      yield put({ type: types.FETCH_CHECK_IN_TODAY });
+    const duck = this;
+    yield takeLatest([duck.types.PAGE_RELOAD], function* () {
+      yield all([
+        call([duck, duck.fetchUserInfo]),
+        call([duck, duck.fetchCheckInToday]),
+        call([duck, duck.fetchCheckInHistory]),
+      ]);
     });
   }
   *watchToShowRankList() {
-    const { types, creators } = this;
-    yield takeLatest([types.SHOW_RANK_LIST], function* () {
-      yield put(creators.setShowRankList(true));
-      yield all([put({ type: types.FETCH_CHECK_IN_RANK_TODAY }), put({ type: types.FETCH_CHECK_IN_TODAY })]);
+    const duck = this;
+    yield takeLatest([duck.types.SHOW_RANK_LIST], function* () {
+      yield put(duck.creators.setShowRankList(true));
+      yield all([call([duck, duck.fetchCheckInHistory]), call([duck, duck.fetchCheckInToday])]);
     });
   }
   *watchToShowHistoryRecord() {
-    const { types, creators } = this;
-    yield takeLatest([types.SHOW_HISTORY_RECORD], function* () {
-      yield put(creators.setShowHistoryRecord(true));
-      yield put({ type: types.FETCH_USER_HISTORY });
+    const duck = this;
+    yield takeLatest([duck.types.SHOW_HISTORY_RECORD], function* () {
+      yield put(duck.creators.setShowHistoryRecord(true));
+      yield call([duck, duck.fetchUserHistory]);
     });
   }
   *watchToHideModal() {
@@ -152,13 +142,6 @@ export default class HomeDuck extends Duck {
       });
     });
   }
-  *watchToFetchUserInfo() {
-    const { types, ducks } = this;
-    yield takeLatest([types.FETCH_USER_INFO], function* () {
-      const userInfo: IUserInfo = yield ducks.loading.call(requestUserInfo);
-      yield put({ type: types.SET_USER_INFO, payload: userInfo });
-    });
-  }
   *watchToSendUserAvatar() {
     const { types } = this;
     yield takeLatest([types.SEND_USER_AVATAR], function* () {
@@ -167,51 +150,55 @@ export default class HomeDuck extends Duck {
       yield call(requestUserAvatar, { avatarBase64Encode: base64String });
     });
   }
-  *watchToFetchRankToday() {
-    const { types, ducks } = this;
-    yield takeLatest([types.FETCH_CHECK_IN_RANK_TODAY], function* () {
-      const checkIns: IRankToday[] = yield ducks.loading.call(requestCheckInRankToday);
-      yield put({
-        type: types.SET_RANK_LIST,
-        payload: checkIns ?? [],
-      });
+  *fetchRankToday() {
+    const { ducks, types } = this;
+    const checkIns: IRankToday[] = yield ducks.loading.call(requestCheckInRankToday);
+    yield put({
+      type: types.SET_RANK_LIST,
+      payload: checkIns ?? [],
     });
   }
-  *watchToFetchUserHistory() {
+  *fetchUserHistory() {
+    const { ducks, types } = this;
+    const semesterCheckIns: ISemesterCheckIn[] = yield ducks.loading.call(requestUserHistory);
+    yield put({ type: types.SET_HISTORY_RECORD, payload: semesterCheckIns ?? [] });
+  }
+  *fetchUserInfo() {
     const { types, ducks } = this;
-    yield takeLatest([types.FETCH_USER_HISTORY], function* () {
-      const semesterCheckIns: ISemesterCheckIn[] = yield ducks.loading.call(requestUserHistory);
-      yield put({ type: types.SET_HISTORY_RECORD, payload: semesterCheckIns ?? [] });
+    const userInfo: IUserInfo = yield ducks.loading.call(requestUserInfo);
+    yield put({ type: types.SET_USER_INFO, payload: userInfo });
+  }
+  *fetchCheckInHistory() {
+    const { types, ducks } = this;
+    const checkIns: ICheckIn[] = (yield ducks.loading.call(requestCheckInHistory)) ?? [];
+    const runningRecords: RunningRecord[] = checkIns.map((checkIn) => {
+      const [year, month, day] = checkIn.dateTag.split('-');
+      const duration = parseSecondTime((checkIn.endAt - checkIn.startAt) / 1000);
+      return {
+        mood: checkIn.motion,
+        year: Number.parseInt(year, 10),
+        month: Number.parseInt(month, 10),
+        day: Number.parseInt(day, 10),
+        ranking: checkIn.rank,
+        speed: `${duration.minutes}'${duration.seconds.toString().padStart(2, '0')}''`,
+      };
+    });
+    yield put({
+      type: types.SET_RUNNING_RECORD,
+      payload: runningRecords ?? [],
     });
   }
-  *watchToFetchCheckInHistory() {
+  *fetchCheckInToday() {
     const { types, ducks } = this;
-    yield takeLatest([types.FETCH_CHECK_IN_HISTORY], function* () {
-      const checkIns: ICheckIn[] = (yield ducks.loading.call(requestCheckInHistory)) ?? [];
-      const runningRecords: RunningRecord[] = checkIns.map((checkIn) => {
-        const [year, month, day] = checkIn.dateTag.split('-');
-        const duration = parseSecondTime((checkIn.endAt - checkIn.startAt) / 1000);
-        return {
-          mood: checkIn.motion,
-          year: Number.parseInt(year, 10),
-          month: Number.parseInt(month, 10),
-          day: Number.parseInt(day, 10),
-          ranking: checkIn.rank,
-          speed: `${duration.minutes}'${duration.seconds.toString().padStart(2, '0')}''`,
-        };
-      });
-      yield put({
-        type: types.SET_RUNNING_RECORD,
-        payload: runningRecords ?? [],
-      });
-    });
+    const checkInToday = yield ducks.loading.call(requestCheckInToday);
+    yield put({ type: types.SET_CHECK_IN_TODAY, payload: checkInToday });
   }
   *watchToLikeCheckIn() {
-    const { types, ducks } = this;
-    yield takeLatest([types.SEND_LIKE_CHECK_IN], function* (action: any) {
+    const duck = this;
+    yield takeLatest([duck.types.SEND_LIKE_CHECK_IN], function* (action: any) {
       const { checkInID, isLike } = action.payload;
-      yield ducks.loading.call(requestCheckInLike, { checkInID, isLike });
-      yield put({ type: types.FETCH_CHECK_IN_RANK_TODAY });
+      yield duck.ducks.loading.call(requestCheckInLike, { checkInID, isLike });
+      yield call([duck, duck.fetchRankToday]);
     });
   }
   *watchToUnbindUser() {
@@ -220,27 +207,6 @@ export default class HomeDuck extends Duck {
       yield ducks.loading.call(requestUserUnbind);
       wx.clearStorageSync();
       yield put({ type: types.PAGE_RELOAD });
-    });
-  }
-  *watchToFetchCheckInToday() {
-    const { types, ducks } = this;
-    yield takeLatest([types.FETCH_CHECK_IN_TODAY], function* () {
-      const checkInToday = yield ducks.loading.call(requestCheckInToday);
-      yield put({ type: types.SET_CHECK_IN_TODAY, payload: checkInToday });
-    });
-  }
-  *watchToScanQrCode() {
-    const { types, ducks } = this;
-    yield takeLatest([types.SCAN_QR_CODE], function* () {
-      const result = yield scanCode({
-        onlyFromCamera: true,
-      });
-      if (result?.scanType === 'WX_CODE' && result?.errMsg === 'scanCode:ok' && result?.path) {
-        const url = String(result.path).startsWith('/') ? result.path : '/' + result.path;
-        yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url } });
-      } else {
-        wx.showToast({ title: '扫码失败', icon: 'none' });
-      }
     });
   }
 }

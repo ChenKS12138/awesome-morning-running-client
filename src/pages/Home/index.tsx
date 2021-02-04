@@ -1,4 +1,6 @@
 import { createElement, useCallback, useMemo, useEffect } from 'rax';
+import { addNativeEventListener } from 'rax-app';
+
 import {
   RaxView as View,
   RaxScrollView as ScrollView,
@@ -59,6 +61,11 @@ function Home() {
   useEffect(() => {
     dispatch({ type: duck.types.PAGE_RELOAD });
   }, []);
+
+  addNativeEventListener('onPullDownRefresh', () => {
+    dispatch({ type: duck.types.PAGE_RELOAD });
+    wx.stopPullDownRefresh();
+  });
 
   return (
     <>
@@ -205,7 +212,7 @@ function HomeAction({ dispatch, duck, store }: DuckProps<HomeDuck>) {
               <Button
                 color={Button.colors.GREEN}
                 onClick={() => {
-                  dispatch({ type: duck.types.SCAN_QR_CODE });
+                  dispatch({ type: duck.ducks.scanCode.types.SCAN_QR_CODE });
                 }}
                 width="628rpx"
               >
@@ -450,7 +457,7 @@ function HomeHistoryRecordModal({ dispatch, store, duck }: DuckProps<HomeDuck>) 
                       {`${item.academicYear}-${item.academicYear + 1}`}
                     </view>
                     <view className={styles['history-list-item-term']}>
-                      第{numToChineseCharacter(item.semester)}学期
+                      第{numToChineseCharacter(item.semester + 1)}学期
                     </view>
                   </view>
                   <view className={styles['history-list-item-count-wrapper']}>

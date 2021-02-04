@@ -1,5 +1,5 @@
 import { reduceFromPayload, createToPayload, Duck } from '@/utils/duck';
-import { LocationDuck, TimerDuck, LoadingDuck, RouterDuck } from '@/ducks';
+import { LocationDuck, TimerDuck, LoadingDuck, RouterDuck, ScanCodeDuck } from '@/ducks';
 import { parseSecondTime, matcher, showModal, parseQrCodeSence } from '@/utils';
 import { EXERCISE_STATUS, CHECK_IN_STATUS, VALID_SCENE_EVENT, VALID_SCENE_TYPE } from '@/utils/constants';
 import { put, select, fork } from 'redux-saga/effects';
@@ -11,7 +11,7 @@ import {
   requestCheckInStart,
   requestCheckInEnd,
 } from '@/utils/model';
-import { waitForModalHidden, enchanceTakeLatest as takeLatest, scanCode } from '@/utils/effects';
+import { waitForModalHidden, enchanceTakeLatest as takeLatest } from '@/utils/effects';
 import { getSearchParams } from 'rax-app';
 
 export default class ExerciseDuck extends Duck {
@@ -32,8 +32,6 @@ export default class ExerciseDuck extends Duck {
       FETCH_CHECKIN_END,
 
       LOAD_FINISH_PAGE,
-
-      SCAN_QR_CODE,
     }
     return {
       ...super.quickTypes,
@@ -87,6 +85,7 @@ export default class ExerciseDuck extends Duck {
       timer: TimerDuck,
       loading: LoadingDuck,
       router: RouterDuck,
+      scanCode: ScanCodeDuck,
     };
   }
   *saga() {
@@ -98,7 +97,6 @@ export default class ExerciseDuck extends Duck {
     yield fork([this, this.watchPageReload]);
     yield fork([this, this.watchExerciseStatus]);
     yield fork([this, this.watchTimePluse]);
-    yield fork([this, this.watchToScanQrCode]);
   }
   *watchPageReload() {
     const duck = this;
@@ -113,6 +111,13 @@ export default class ExerciseDuck extends Duck {
           const todayCheckIn: ICheckIn | null = yield ducks.loading.call(requestCheckInToday);
           if (todayCheckIn?.status === CHECK_IN_STATUS.IN_TIME_FINISH) {
             yield put({ type: types.SET_EXERCISE_STATUS, payload: EXERCISE_STATUS.FINISH });
+          } else if (todayCheckIn?.status === CHECK_IN_STATUS.OVERTIME_FINISH) {
+            showModal({
+              title: '超时',
+              content: '今日跑操超时!',
+              showCancel: false,
+            });
+            throw new Error('今日跑操超时!');
           } else {
             if (!todayCheckIn) {
               if (scene?.event === VALID_SCENE_EVENT.CHECK_IN && scene?.type === VALID_SCENE_TYPE.START) {
@@ -245,21 +250,6 @@ export default class ExerciseDuck extends Duck {
       const { motion, todayCheckIn } = selectors(yield select());
       if (todayCheckIn?.id) {
         yield ducks.loading.call(requestCheckInMotion, { motion, checkInID: todayCheckIn?.id });
-      }
-    });
-  }
-  *watchToScanQrCode() {
-    const { types, ducks } = this;
-    yield takeLatest([types.SCAN_QR_CODE], function* () {
-      const result = yield scanCode({
-        onlyFromCamera: true,
-        scanType: ['qrCode'],
-      });
-      if (result?.errMsg === 'scanCode:ok' && result?.path) {
-        const url = String(result.path).startsWith('/') ? result.path : '/' + result.path;
-        yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url } });
-      } else {
-        wx.showToast({ title: '扫码失败' });
       }
     });
   }
