@@ -3,7 +3,7 @@ import { LocationDuck, TimerDuck, LoadingDuck, RouterDuck, ScanCodeDuck } from '
 import { parseSecondTime, matcher, showModal, parseQrCodeSence } from '@/utils';
 import { EXERCISE_STATUS, CHECK_IN_STATUS, VALID_SCENE_EVENT, VALID_SCENE_TYPE } from '@/utils/constants';
 import { put, select, fork } from 'redux-saga/effects';
-import { IUserInfo, ICheckIn } from '@/utils/interface';
+import { IUserInfo, ICheckInToday } from '@/utils/interface';
 import {
   requestUserInfo,
   requestCheckInToday,
@@ -48,7 +48,7 @@ export default class ExerciseDuck extends Duck {
       todayPace: reduceFromPayload(types.SET_TODAY_PACE, 453),
       startAt: reduceFromPayload<number>(types.SET_START_AT, Date.now()),
       userInfo: reduceFromPayload<IUserInfo | null>(types.SET_USER_INFO, null),
-      todayCheckIn: reduceFromPayload<ICheckIn | null>(types.SET_TODAY_CHECK_IN, null),
+      todayCheckIn: reduceFromPayload<ICheckInToday | null>(types.SET_TODAY_CHECK_IN, null),
     };
   }
   get creators() {
@@ -68,7 +68,7 @@ export default class ExerciseDuck extends Duck {
       currentCount: (state: State) => state.userInfo?.currentCount ?? 0,
       parsedTodayTimeCost: (state: State) => {
         if (state.todayCheckIn) {
-          const { startAt, endAt } = state.todayCheckIn;
+          const { startAt, endAt } = state.todayCheckIn.checkIn;
           return parseSecondTime(Math.round((endAt - startAt) / 1000));
         } else {
           return parseSecondTime(0);
@@ -108,10 +108,10 @@ export default class ExerciseDuck extends Duck {
         yield put({ type: types.FETCH_CHECKIN_END });
       } else {
         try {
-          const todayCheckIn: ICheckIn | null = yield ducks.loading.call(requestCheckInToday);
-          if (todayCheckIn?.status === CHECK_IN_STATUS.IN_TIME_FINISH) {
+          const todayCheckIn: ICheckInToday | null = yield ducks.loading.call(requestCheckInToday);
+          if (todayCheckIn?.checkIn?.status === CHECK_IN_STATUS.IN_TIME_FINISH) {
             yield put({ type: types.SET_EXERCISE_STATUS, payload: EXERCISE_STATUS.FINISH });
-          } else if (todayCheckIn?.status === CHECK_IN_STATUS.OVERTIME_FINISH) {
+          } else if (todayCheckIn?.checkIn?.status === CHECK_IN_STATUS.OVERTIME_FINISH) {
             showModal({
               title: '超时',
               content: '今日跑操超时!',
@@ -128,7 +128,7 @@ export default class ExerciseDuck extends Duck {
             }
             yield put({
               type: types.SET_START_AT,
-              payload: todayCheckIn?.startAt ?? Date.now(),
+              payload: todayCheckIn?.checkIn?.startAt ?? Date.now(),
             });
             yield put({ type: ducks.timer.types.ACTIVATE });
           }
@@ -142,14 +142,14 @@ export default class ExerciseDuck extends Duck {
   *watchToLoadFinishPage() {
     const { types, ducks } = this;
     yield takeLatest([types.LOAD_FINISH_PAGE], function* () {
-      const todayCheckIn: ICheckIn = yield ducks.loading.call(requestCheckInToday);
+      const todayCheckIn: ICheckInToday = yield ducks.loading.call(requestCheckInToday);
       yield put({
         type: types.SET_TODAY_CHECK_IN,
         payload: todayCheckIn,
       });
       yield put({
         type: types.SET_MOTION,
-        payload: todayCheckIn.motion,
+        payload: todayCheckIn?.checkIn.motion,
       });
       yield put({
         type: ducks.location.types.FETCH_LOCATION,
@@ -213,8 +213,8 @@ export default class ExerciseDuck extends Duck {
     const { types, ducks } = this;
     yield takeLatest([types.FETCH_CHECKIN_END], function* () {
       try {
-        const checkIn: ICheckIn = yield ducks.loading.call(requestCheckInEnd);
-        if (checkIn?.status === CHECK_IN_STATUS.OVERTIME_FINISH) {
+        const checkIn: ICheckInToday = yield ducks.loading.call(requestCheckInEnd);
+        if (checkIn?.checkIn?.status === CHECK_IN_STATUS.OVERTIME_FINISH) {
           showModal({
             title: '超时',
             content: '今日跑操超时!',
@@ -248,8 +248,8 @@ export default class ExerciseDuck extends Duck {
     const { types, selectors, ducks } = this;
     yield takeLatest([types.SET_MOTION], function* () {
       const { motion, todayCheckIn } = selectors(yield select());
-      if (todayCheckIn?.id) {
-        yield ducks.loading.call(requestCheckInMotion, { motion, checkInID: todayCheckIn?.id });
+      if (todayCheckIn?.checkIn?.id) {
+        yield ducks.loading.call(requestCheckInMotion, { motion, checkInID: todayCheckIn?.checkIn?.id });
       }
     });
   }

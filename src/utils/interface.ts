@@ -3,7 +3,7 @@ export interface ICheckIn {
   startAt: number;
   endAt: number;
   status: number;
-  rank: number;
+  // rank: number;
   dateTag: string;
   createAt: number;
   updateAt: number;
@@ -11,6 +11,11 @@ export interface ICheckIn {
   motion: string;
   userID: number;
   semesterRunningID: number;
+}
+
+export interface ICheckInToday {
+  checkIn: ICheckIn;
+  rank: number;
 }
 
 export interface IStudent {

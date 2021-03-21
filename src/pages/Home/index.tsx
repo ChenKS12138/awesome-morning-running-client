@@ -16,6 +16,7 @@ import {
 } from '@/components';
 import { numToChineseCharacter, composeClassnames, parseSecondTime, matcher } from '@/utils';
 import { useDuckState, DuckProps } from '@/utils/duck';
+import { ICheckInToday } from '@/utils/interface';
 
 import styles from './index.module.css';
 import HomeDuck from './index.duck';
@@ -222,10 +223,10 @@ function HomeAction({ dispatch, duck, store }: DuckProps<HomeDuck>) {
           },
           {
             condition: () => true,
-            handler: (checkIn) =>
+            handler: (checkIn: ICheckInToday) =>
               matcher([
                 {
-                  condition: (item) => item.status === CHECK_IN_STATUS.RUNNING,
+                  condition: (item: ICheckInToday) => item.checkIn.status === CHECK_IN_STATUS.RUNNING,
                   handler: (
                     <Button
                       color={Button.colors.ORANGE}
@@ -420,9 +421,9 @@ function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
               <view className={styles['rank-mine-info']}>
                 <view className={styles['rank-mine-username']}>{userInfo?.username}</view>
                 <view className={styles['rank-mine-duration']}>
-                  {formatTime(todayCheckIn.startAt)}
+                  {formatTime(todayCheckIn.checkIn.startAt)}
                   {'-'}
-                  {formatTime(todayCheckIn.endAt)}
+                  {formatTime(todayCheckIn.checkIn.endAt)}
                 </view>
               </view>
             </view>

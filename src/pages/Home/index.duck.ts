@@ -12,7 +12,7 @@ import {
   requestUserUnbind,
   requestCheckInToday,
 } from '@/utils/model';
-import { IUserInfo, ICheckIn, IRankToday, ISemesterCheckIn, RunningRecord } from '@/utils/interface';
+import { IUserInfo, ICheckIn, IRankToday, ISemesterCheckIn, RunningRecord, ICheckInToday } from '@/utils/interface';
 import { LoadingDuck, RouterDuck, ScanCodeDuck } from '@/ducks';
 import { enchanceTakeLatest as takeLatest } from '@/utils/effects';
 
@@ -66,7 +66,7 @@ export default class HomeDuck extends Duck {
         RUNNING_RECORD_DISPLAY_MODAL.GRID,
       ),
       runningRecord: reduceFromPayload<RunningRecord[]>(types.SET_RUNNING_RECORD, []),
-      todayCheckIn: reduceFromPayload<ICheckIn | null>(types.SET_CHECK_IN_TODAY, null),
+      todayCheckIn: reduceFromPayload<ICheckInToday | null>(types.SET_CHECK_IN_TODAY, null),
     };
   }
   get rawSelectors() {
@@ -113,7 +113,7 @@ export default class HomeDuck extends Duck {
     const duck = this;
     yield takeLatest([duck.types.SHOW_RANK_LIST], function* () {
       yield put(duck.creators.setShowRankList(true));
-      yield all([call([duck, duck.fetchCheckInHistory]), call([duck, duck.fetchCheckInToday])]);
+      yield all([call([duck, duck.fetchRankToday]), call([duck, duck.fetchCheckInToday])]);
     });
   }
   *watchToShowHistoryRecord() {
@@ -179,7 +179,8 @@ export default class HomeDuck extends Duck {
         year: Number.parseInt(year, 10),
         month: Number.parseInt(month, 10),
         day: Number.parseInt(day, 10),
-        ranking: checkIn.rank,
+        // ranking: checkIn.rank,
+        ranking: 1,
         speed: `${duration.minutes}'${duration.seconds.toString().padStart(2, '0')}''`,
       };
     });
