@@ -208,7 +208,7 @@ function HomeAction({ dispatch, duck, store }: DuckProps<HomeDuck>) {
       <view className={styles['action-content']}>
         {matcher([
           {
-            condition: null,
+            condition: (item) => item?.checkIn === null,
             handler: (
               <Button
                 color={Button.colors.GREEN}
@@ -226,7 +226,7 @@ function HomeAction({ dispatch, duck, store }: DuckProps<HomeDuck>) {
             handler: (checkIn: ICheckInToday) =>
               matcher([
                 {
-                  condition: (item: ICheckInToday) => item.checkIn.status === CHECK_IN_STATUS.RUNNING,
+                  condition: (item: ICheckInToday) => item?.checkIn?.status === CHECK_IN_STATUS.RUNNING,
                   handler: (
                     <Button
                       color={Button.colors.ORANGE}
@@ -421,9 +421,9 @@ function HomeRankListModal({ dispatch, duck, store }: DuckProps<HomeDuck>) {
               <view className={styles['rank-mine-info']}>
                 <view className={styles['rank-mine-username']}>{userInfo?.username}</view>
                 <view className={styles['rank-mine-duration']}>
-                  {formatTime(todayCheckIn.checkIn.startAt)}
+                  {formatTime(todayCheckIn?.checkIn?.startAt)}
                   {'-'}
-                  {formatTime(todayCheckIn.checkIn.endAt)}
+                  {formatTime(todayCheckIn?.checkIn?.endAt)}
                 </view>
               </view>
             </view>
@@ -495,6 +495,6 @@ function formatSpeed(second) {
 }
 
 function formatTime(millsec) {
-  const t = new Date(millsec / 1000);
-  return `${t.getHours()}:${t.getMinutes()}`;
+  const t = new Date(millsec);
+  return `${t.getHours().toString()}:${t.getMinutes().toString().padStart(2, '0')}`;
 }

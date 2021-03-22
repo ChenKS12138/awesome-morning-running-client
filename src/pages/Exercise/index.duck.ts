@@ -68,7 +68,7 @@ export default class ExerciseDuck extends Duck {
       currentCount: (state: State) => state.userInfo?.currentCount ?? 0,
       parsedTodayTimeCost: (state: State) => {
         if (state.todayCheckIn) {
-          const { startAt, endAt } = state.todayCheckIn.checkIn;
+          const { startAt, endAt } = state.todayCheckIn.checkIn || { startAt: 0, endAt: 0 };
           return parseSecondTime(Math.round((endAt - startAt) / 1000));
         } else {
           return parseSecondTime(0);
@@ -119,7 +119,7 @@ export default class ExerciseDuck extends Duck {
             });
             throw new Error('今日跑操超时!');
           } else {
-            if (!todayCheckIn) {
+            if (!todayCheckIn?.checkIn) {
               if (scene?.event === VALID_SCENE_EVENT.CHECK_IN && scene?.type === VALID_SCENE_TYPE.START) {
                 yield ducks.loading.call(requestCheckInStart);
               } else {
@@ -149,7 +149,7 @@ export default class ExerciseDuck extends Duck {
       });
       yield put({
         type: types.SET_MOTION,
-        payload: todayCheckIn?.checkIn.motion,
+        payload: todayCheckIn?.checkIn?.motion,
       });
       yield put({
         type: ducks.location.types.FETCH_LOCATION,

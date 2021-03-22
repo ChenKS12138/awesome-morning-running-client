@@ -7,14 +7,14 @@ export interface ICheckIn {
   dateTag: string;
   createAt: number;
   updateAt: number;
-  likeCount: number;
+  // likeCount: number;
   motion: string;
   userID: number;
   semesterRunningID: number;
 }
 
 export interface ICheckInToday {
-  checkIn: ICheckIn;
+  checkIn: ICheckIn | null;
   rank: number;
 }
 
