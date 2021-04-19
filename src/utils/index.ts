@@ -67,6 +67,7 @@ export function fetchLocation(): Promise<{ longitude: number; latitude: number; 
  * @param second
  */
 export function parseSecondTime(originSeconds: number): { seconds: number; minutes: number } {
+  originSeconds = Math.round(originSeconds);
   const seconds = originSeconds % 60;
   const minutes = Math.floor(originSeconds / 60);
   return { seconds, minutes };
