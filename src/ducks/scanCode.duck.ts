@@ -1,7 +1,7 @@
 import { Duck } from '@/utils/duck';
 import { enchanceTakeLatest as takeLatest, scanCode } from '@/utils/effects';
 import { fork, put } from 'redux-saga/effects';
-import { RouterDuck } from '.';
+import RouterDuck from './router.duck';
 
 export default class ScanCodeDuck extends Duck {
   get quickTypes() {

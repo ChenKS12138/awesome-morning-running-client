@@ -70,3 +70,29 @@ interface IUserLogin {
 export const requestUserLogin = (data: IUserLogin) => request.post<Response<string>, IUserLogin>('/user/login', data);
 
 export const requestUserUnbind = () => request.post<Response<IStudent>>('/user/unbind');
+
+interface IUserBindByPassword {
+  username: string;
+  password: string;
+  wxLoginCode: string;
+}
+
+/**
+ * @param {IUserBindByPassword} data
+ */
+export const requestUserBindByPassword = (data: IUserBindByPassword) =>
+  request.post<Response<IStudent>, IUserBindByPassword>('/user/bindByPassword', data);
+
+interface IUserBindBySms {
+  phone: string;
+  smsCode: string;
+  wxLoginCode: string;
+}
+
+/**
+ * @param {IUserBindBySms} data
+ */
+export const requestUserBindBySms = (data: IUserBindBySms) =>
+  request.post<Response<IStudent>, IUserBindBySms>('/user/bindBySms', data);
+
+export const requestUserSendSms = (phoneNumber: string) => request.get(`/user/sendSms?phoneNumber=${phoneNumber}`);

@@ -30,3 +30,21 @@
 .input {
   font-size: 36rpx;
 }
+
+.form_bind-type_btn {
+  margin-top: 30rpx;
+  text-align: right;
+  margin-right: 30rpx;
+  color: gray;
+}
+
+.form_sms-code_container {
+  display: flex;
+  margin: auto 15rpx;
+}
+
+.form_sms-code_btn {
+  width: 200rpx;
+  margin-left: 20rpx;
+  font-size: 40rpx;
+}

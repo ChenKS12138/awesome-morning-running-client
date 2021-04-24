@@ -69,10 +69,11 @@ export default class ExerciseDuck extends Duck {
       parsedTodayTimeCost: (state: State) => {
         if (state.todayCheckIn) {
           const { startAt, endAt } = state.todayCheckIn.checkIn || { startAt: 0, endAt: 0 };
-          return parseSecondTime(Math.round((endAt - startAt) / 1000));
-        } else {
-          return parseSecondTime(0);
+          if (endAt !== null) {
+            return parseSecondTime(Math.round((endAt - startAt) / 1000));
+          }
         }
+        return parseSecondTime(0);
       },
       todayRank: (state: State) => state.todayCheckIn?.rank,
       parsedTodayPace: (state: State) => parseSecondTime(state.todayPace),
