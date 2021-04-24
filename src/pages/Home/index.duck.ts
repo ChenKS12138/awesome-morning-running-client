@@ -173,16 +173,20 @@ export default class HomeDuck extends Duck {
     const checkIns: ICheckIn[] = (yield ducks.loading.call(requestCheckInHistory)) ?? [];
     const runningRecords: RunningRecord[] = checkIns.map((checkIn) => {
       const [year, month, day] = checkIn.dateTag.split('-');
-      const duration = parseSecondTime((checkIn.endAt - checkIn.startAt) / 1000);
-      return {
+      const item = {
         mood: checkIn.motion,
         year: Number.parseInt(year, 10),
         month: Number.parseInt(month, 10),
         day: Number.parseInt(day, 10),
         // ranking: checkIn.rank,
         ranking: 1,
-        speed: `${duration.minutes}'${duration.seconds.toString().padStart(2, '0')}''`,
+        speed: '',
       };
+      if (checkIn.endAt !== null) {
+        const duration = parseSecondTime((checkIn.endAt - checkIn.startAt) / 1000);
+        item.speed = `${duration.minutes}'${duration.seconds.toString().padStart(2, '0')}''`;
+      }
+      return item;
     });
     yield put({
       type: types.SET_RUNNING_RECORD,

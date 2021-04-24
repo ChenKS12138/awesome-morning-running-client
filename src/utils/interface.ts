@@ -1,7 +1,7 @@
 export interface ICheckIn {
   id: number;
   startAt: number;
-  endAt: number;
+  endAt: number | null;
   status: number;
   // rank: number;
   dateTag: string;
