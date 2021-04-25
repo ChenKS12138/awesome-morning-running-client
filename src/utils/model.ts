@@ -1,5 +1,5 @@
-import { Response, request } from '@/utils/request';
-import { ICheckIn, ISemesterCheckIn, IStudent, IUserInfo, IRankToday } from '@/utils/interface';
+import { Response, request, oauthRequest } from '@/utils/request';
+import { ICheckIn, ISemesterCheckIn, IStudent, IUserInfo, IRankToday, IOauthEncryptedStudent } from '@/utils/interface';
 
 export const requestCheckInStart = () => request.post<Response<ICheckIn>>('/checkIn/start');
 
@@ -95,4 +95,44 @@ interface IUserBindBySms {
 export const requestUserBindBySms = (data: IUserBindBySms) =>
   request.post<Response<IStudent>, IUserBindBySms>('/user/bindBySms', data);
 
+interface IRequestUserBindByEncryptedData {
+  enc: string;
+  checksum: string;
+  salt: string;
+  wxLoginCode: string;
+}
+
+/**
+ * @param {IRequestUserBindByEncryptedData} data
+ */
+export const requestUserBindByEncryptedData = (data: IRequestUserBindByEncryptedData) =>
+  request.post<Response<IStudent>, IRequestUserBindByEncryptedData>('/user/bindByEncryptedData', data);
+
 export const requestUserSendSms = (phoneNumber: string) => request.get(`/user/sendSms?phoneNumber=${phoneNumber}`);
+
+export const requestOauthSendSms = (phoneNumber: string) => oauthRequest.get(`/sendSms?phoneNumber=${phoneNumber}`);
+
+interface IRequestOauthGetUserinfoByPassword {
+  username: string;
+  password: string;
+}
+
+/**
+ * @param {IRequestOauthGetUserinfoByPassword} data
+ */
+export const requestOauthGetUserinfoByPassword = (data: IRequestOauthGetUserinfoByPassword) =>
+  oauthRequest.post<Response<IOauthEncryptedStudent>, IRequestOauthGetUserinfoByPassword>(
+    '/getUserinfoByPassword',
+    data,
+  );
+
+interface IRequestOauthGetUserinfoBySms {
+  phoneNumber: string;
+  code: string;
+}
+
+/**
+ * @param {IRequestOauthGetUserinfoBySms} data
+ */
+export const requestOauthGetUserinfoBySms = (data: IRequestOauthGetUserinfoBySms) =>
+  oauthRequest.post<Response<IOauthEncryptedStudent>, IRequestOauthGetUserinfoBySms>('/getUserinfoBySms', data);

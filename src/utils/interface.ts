@@ -83,3 +83,9 @@ export interface RankItem {
   isLiked: boolean;
   ranking: number;
 }
+
+export interface IOauthEncryptedStudent {
+  enc: string;
+  checksum: string;
+  salt: string;
+}

@@ -3,6 +3,6 @@
 ## How To Start
 
 ```bash
-cp .env.template .env.development
+cp .env.example .env.development
 yarn start
 ```

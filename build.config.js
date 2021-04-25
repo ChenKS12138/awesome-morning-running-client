@@ -3,6 +3,7 @@ const pkgInfo = require('./package.json');
 const config = {
   define: {
     REQUEST_BASE_URL: process.env.REQUEST_BASE_URL,
+    REQUEST_OAUTH_URL: process.env.REQUEST_OAUTH_URL,
     REDUX_LOGGER_ENABLE: String(process.env.REDUX_LOGGER_ENABLE).toLowerCase() === 'true',
     NODE_ENV: process.env.NODE_ENV,
   },

@@ -27,7 +27,7 @@ export default class LoginDuck extends Duck {
   get reducers() {
     const { types } = this;
     return {
-      bindType: reduceFromPayload<BIND_TYPE>(types.SET_BIND_TYPE, BIND_TYPE.BIND_BY_SMS),
+      bindType: reduceFromPayload<BIND_TYPE>(types.SET_BIND_TYPE, BIND_TYPE.BIND_BY_PASSWORD),
     };
   }
   get creators() {
@@ -56,10 +56,19 @@ export default class LoginDuck extends Duck {
     yield takeLatest([types.BIND_BY_PASSWORD], function* () {
       const { data, isValid } = ducks.bindByPasswordForm.selectors(yield select());
       if (isValid) {
-        const code = yield getWxCode();
-        const result = yield ducks.loading.call(model.requestUserBindByPassword, { ...data, wxLoginCode: code });
-        if (result) {
-          yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
+        const encryptedInfo = yield ducks.loading.call(model.requestOauthGetUserinfoByPassword, {
+          username: data.username,
+          password: data.password,
+        });
+        if (encryptedInfo) {
+          const code = yield getWxCode();
+          const result = yield ducks.loading.call(model.requestUserBindByEncryptedData, {
+            ...encryptedInfo,
+            wxLoginCode: code,
+          });
+          if (result) {
+            yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
+          }
         }
       }
     });
@@ -69,10 +78,19 @@ export default class LoginDuck extends Duck {
     yield takeLatest([types.BIND_BY_SMS], function* () {
       const { data, isValid } = ducks.bindBySmsForm.selectors(yield select());
       if (isValid) {
-        const code = yield getWxCode();
-        const result = yield ducks.loading.call(model.requestUserBindBySms, { ...data, wxLoginCode: code });
-        if (result) {
-          yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
+        const encryptedInfo = yield ducks.loading.call(model.requestOauthGetUserinfoBySms, {
+          phoneNumber: data.phone,
+          code: data.smsCode,
+        });
+        if (encryptedInfo) {
+          const code = yield getWxCode();
+          const result = yield ducks.loading.call(model.requestUserBindByEncryptedData, {
+            ...encryptedInfo,
+            wxLoginCode: code,
+          });
+          if (result) {
+            yield put({ type: ducks.router.types.REDIRECT_TO, payload: { url: '/pages/Home/index' } });
+          }
         }
       }
     });
@@ -84,7 +102,7 @@ export default class LoginDuck extends Duck {
         data: { phone },
       } = ducks.bindBySmsForm.selectors(yield select());
       if (phone?.length) {
-        const result = yield model.requestUserSendSms(phone);
+        const result = yield model.requestOauthSendSms(phone);
         if (result) {
           yield put({
             type: ducks.timer.types.RESET,
