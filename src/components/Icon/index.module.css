@@ -28,3 +28,14 @@
   width: 34rpx;
   height: 34rpx;
 }
+
+.login-icon {
+  width: 38rpx;
+  height: 42rpx;
+  flex-shrink: 0;
+}
+
+.next {
+  width: 32rpx;
+  height: 26rpx;
+}

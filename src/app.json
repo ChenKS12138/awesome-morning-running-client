@@ -5,21 +5,26 @@
       "source": "pages/Home/index",
       "window": {
         "title": "晨跑",
-        "pullRefresh": true
+        "pullRefresh": true,
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black"
       }
     },
     {
       "path": "/exercise",
       "source": "pages/Exercise/index",
       "window": {
-        "title": "晨跑"
+        "title": "晨跑",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black"
       }
     },
     {
       "path": "/login",
       "source": "pages/Login/index",
       "window": {
-        "title": "登录"
+        "title": "登录",
+        "navigationStyle": "custom"
       }
     }
   ],

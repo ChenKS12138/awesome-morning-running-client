@@ -9,6 +9,9 @@ import {
   ICON_QUESTION,
   ICON_SHARE_GREEN,
   ICON_SHARE_WHITE,
+  ICON_GO_NEXT,
+  ICON_USER,
+  ICON_PASSWORD,
 } from '@/assets';
 
 export function Edit() {
@@ -41,4 +44,16 @@ export function CowGray() {
 
 export function CowRed() {
   return <img className={styles.cow} src={ICON_COW_RED} />;
+}
+
+export function Next() {
+  return <img className={styles.next} src={ICON_GO_NEXT} />;
+}
+
+export function User() {
+  return <img className={styles['login-icon']} src={ICON_USER} />;
+}
+
+export function Password() {
+  return <img className={styles['login-icon']} src={ICON_PASSWORD} />;
 }

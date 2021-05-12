@@ -1,12 +1,13 @@
 import { createElement, useCallback } from 'rax';
 
-import { Panel, LoadingHover } from '@/components';
+import { Panel, LoadingHover, Icon } from '@/components';
 
 import styles from './index.module.css';
 import { DuckProps, useDuckState } from '@/utils/duck';
 import LoginDuck from './index.duck';
 import { composeClassnames } from '@/utils';
 import { BIND_TYPE } from '@/utils/constants';
+import { loginIllustration } from '@/assets';
 
 export default Login;
 
@@ -19,21 +20,25 @@ function Login() {
   const { bindType } = duck.selectors(store);
 
   return (
-    <view>
-      <view className={styles.title}>
-        <text>用户登录</text>
+    <view className={styles['login-container-wrapper']}>
+      <view className={styles['login-form-container']}>
+        <view className={styles['login-title']}>用户登录</view>
+        <view className={styles['login-form']}>
+          {bindType === BIND_TYPE.BIND_BY_PASSWORD ? (
+            <LoginPasswordForm duck={duck} store={store} dispatch={dispatch} />
+          ) : (
+            <LoginSmsForm duck={duck} store={store} dispatch={dispatch} />
+          )}
+        </view>
       </view>
-      {bindType === BIND_TYPE.BIND_BY_PASSWORD ? (
-        <LoginPasswordForm duck={duck} store={store} dispatch={dispatch} />
-      ) : (
-        <LoginSmsForm duck={duck} store={store} dispatch={dispatch} />
-      )}
+      <view className={styles['login-bottom-text']}>元气满满的一天从晨跑开始</view>
+      <img className={styles['login-bottom-illustration']} src={loginIllustration} mode="aspectFit" />
       <LoadingHover duck={duck.ducks.loading} store={store} dispatch={dispatch} />
     </view>
   );
 }
 
-interface ILoginPasswordForm extends DuckProps<LoginDuck> {}
+type ILoginPasswordForm = DuckProps<LoginDuck>;
 
 function LoginPasswordForm({ dispatch, duck, store }: ILoginPasswordForm) {
   const {
@@ -61,39 +66,54 @@ function LoginPasswordForm({ dispatch, duck, store }: ILoginPasswordForm) {
 
   const handleBindTypeChange = useCallback(() => {
     dispatch(duck.creators.setBindType(BIND_TYPE.BIND_BY_SMS));
-  }, [duck, dispatch, BIND_TYPE]);
+  }, [duck, dispatch]);
 
   return (
     <view>
-      <Panel.OutlineGreen.Two height="80rpx" width="720rpx" className={styles['input-wrapper']}>
+      <Panel.OutlineGreen.Two height="6.3vh" width="61.87vw" className={styles['input-wrapper']}>
+        <Icon.User />
         <input
           className={styles.input}
-          placeholder="手机号"
+          placeholder-class={styles['input-placeholder-grey']}
+          placeholder="请输入南邮小程序账号"
           value={username}
           type="number"
           onInput={handleUsernameChange}
         />
       </Panel.OutlineGreen.Two>
-      <Panel.OutlineGreen.Two height="80rpx" width="720rpx" className={styles['input-wrapper']}>
+      <Panel.OutlineGreen.Two height="6.3vh" width="61.87vw" className={styles['input-wrapper']}>
+        <Icon.Password />
         <input
           className={styles.input}
-          placeholder="密码"
+          placeholder-class={styles['input-placeholder-grey']}
+          placeholder="请输入南邮小程序密码"
           type="password"
           value={password}
           onInput={handlePasswordChange}
         />
       </Panel.OutlineGreen.Two>
       <view className={styles['form_bind-type_btn']} onClick={handleBindTypeChange}>
-        使用短信验证码登陆
+        使用验证码登陆
       </view>
-      <LoginBtn disabled={!isValid} onClick={handleBind}>
-        <view>登录</view>
+      <LoginBtn
+        disabled={!isValid}
+        onClick={handleBind}
+        width="68.53vw"
+        height="8.55vh"
+        className={styles['login-button-container']}
+      >
+        <view className={styles['login-button']}>
+          <view className={styles['login-text']}>立即登录</view>
+          <view className={styles['login-next']}>
+            <Icon.Next />
+          </view>
+        </view>
       </LoginBtn>
     </view>
   );
 }
 
-interface ILoginSmsForm extends DuckProps<LoginDuck> {}
+type ILoginSmsForm = DuckProps<LoginDuck>;
 
 function LoginSmsForm({ dispatch, duck, store }: ILoginSmsForm) {
   const {
@@ -123,7 +143,7 @@ function LoginSmsForm({ dispatch, duck, store }: ILoginSmsForm) {
 
   const handleBindTypeChange = useCallback(() => {
     dispatch(duck.creators.setBindType(BIND_TYPE.BIND_BY_PASSWORD));
-  }, [duck, dispatch, BIND_TYPE]);
+  }, [duck, dispatch]);
 
   const handleSendSms = useCallback(() => {
     dispatch({
@@ -133,28 +153,51 @@ function LoginSmsForm({ dispatch, duck, store }: ILoginSmsForm) {
 
   return (
     <view>
-      <Panel.OutlineGreen.Two height="80rpx" width="720rpx" className={styles['input-wrapper']}>
-        <input className={styles.input} placeholder="手机号" value={phone} onInput={handlePhoneChange} />
+      <Panel.OutlineGreen.Two height="6.3vh" width="61.87vw" className={styles['input-wrapper']}>
+        <Icon.User />
+        <input
+          className={styles.input}
+          placeholder-class={styles['input-placeholder-grey']}
+          placeholder="请输入南邮小程序账号"
+          value={phone}
+          onInput={handlePhoneChange}
+        />
       </Panel.OutlineGreen.Two>
       <view className={styles['form_sms-code_container']}>
-        <Panel.OutlineGreen.Two height="80rpx" width="720rpx" className={styles['input-wrapper']}>
+        <Panel.OutlineGreen.Two height="6.3vh" width="61.87vw" className={styles['input-wrapper']}>
+          <Icon.Password />
           <input
             className={styles.input}
-            placeholder="验证码"
-            type="password"
+            placeholder-class={styles['input-placeholder-grey']}
+            placeholder="请输入验证码"
+            type="number"
             value={smsCode}
             onInput={handleSmsCodeChange}
           />
+          <LoginBtn
+            disabled={!phone?.length || isTimerActive}
+            className={styles['form_sms-code_btn']}
+            width="162rpx"
+            height="44rpx"
+          >
+            {!isTimerActive ? <view onClick={handleSendSms}>发送验证码</view> : <view>{60 - timerSeconds}s</view>}
+          </LoginBtn>
         </Panel.OutlineGreen.Two>
-        <LoginBtn disabled={!phone?.length || isTimerActive} className={styles['form_sms-code_btn']} width="250rpx">
-          {!isTimerActive ? <view onClick={handleSendSms}>获取</view> : <view>{60 - timerSeconds}s</view>}
-        </LoginBtn>
       </view>
       <view className={styles['form_bind-type_btn']} onClick={handleBindTypeChange}>
-        使用账号密码登陆
+        使用密码登陆
       </view>
-      <LoginBtn disabled={!isValid} onClick={handleBind}>
-        <view>登录</view>
+      <LoginBtn
+        disabled={!isValid}
+        onClick={handleBind}
+        width="68.53vw"
+        height="8.55vh"
+        className={styles['login-button-container']}
+      >
+        <view className={styles['login-button']}>
+          <view className={styles['login-text']}>立即登录</view>
+          <Icon.Next />
+        </view>
       </LoginBtn>
     </view>
   );
@@ -173,25 +216,11 @@ function LoginBtn({ disabled, onClick, children, className, height, width }: ILo
   height = height || '80rpx';
   width = width || '720rpx';
   return disabled ? (
-    <Panel.SolidGray.Zero
-      height={height}
-      width={width}
-      className={composeClassnames([styles['input-wrapper'], styles['btn-wrapper']], className)}
-    >
+    <Panel.SolidGray.Zero height={height} width={width} className={composeClassnames(className)}>
       {children}
     </Panel.SolidGray.Zero>
   ) : (
-    <Panel.SolidGreen.Zero
-      height={height}
-      width={width}
-      className={composeClassnames([
-        styles['input-wrapper'],
-        styles['btn-wrapper'],
-        styles['btn-wrapper--validate'],
-        className,
-      ])}
-      onClick={onClick}
-    >
+    <Panel.SolidGreen.Zero height={height} width={width} className={composeClassnames([className])} onClick={onClick}>
       {children}
     </Panel.SolidGreen.Zero>
   );

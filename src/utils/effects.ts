@@ -12,7 +12,7 @@ export const modalHidden = {
     this._observer.update(value);
   },
   waitForModalHiddenEffect() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const listener = (semaphore) => {
         if (semaphore === 0) {
           resolve();

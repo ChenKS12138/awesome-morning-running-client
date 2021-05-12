@@ -37,7 +37,6 @@ export default abstract class BaseFormDuck<TFormData extends object = {}> extend
       },
     };
   }
-  abstract validator(data: TFormData): boolean;
   *saga() {
     yield fork([this, this.watchToCleanData]);
     yield fork([this, this.watchToUpdateField]);
@@ -65,4 +64,5 @@ export default abstract class BaseFormDuck<TFormData extends object = {}> extend
       });
     });
   }
+  abstract validator(data: TFormData): boolean;
 }

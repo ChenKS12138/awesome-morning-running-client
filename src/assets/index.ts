@@ -8,3 +8,5 @@ export * from './base64encode';
  */
 
 export { default as empty } from './images/empty.png';
+
+export { default as loginIllustration } from './images/login-illustration.png';

@@ -5,14 +5,17 @@
 }
 
 .input-wrapper {
-  height: 80rpx;
-  width: 720rpx;
+  height: 6.3vh;
+  width: 61.87vw;
   margin: 0 auto;
-  margin-top: 40rpx;
-  border-radius: 8rpx;
+  margin-top: 7.05vh;
   display: flex;
   align-items: center;
-  padding-left: 30rpx;
+  border: 0;
+  border-bottom: 1px solid rgba(115, 123, 145, 0.5);
+  border-radius: 0;
+  background-color: transparent;
+  padding-bottom: 3.2vh;
 }
 
 .btn-wrapper {
@@ -28,23 +31,114 @@
 }
 
 .input {
-  font-size: 36rpx;
+  flex-grow: 1;
+  font-size: 28rpx;
+  margin-left: 28rpx;
+}
+
+.input-placeholder-grey {
+  font-size: 28rpx;
+  color: rgba(115, 123, 145, 0.5);
 }
 
 .form_bind-type_btn {
-  margin-top: 30rpx;
+  font-size: 24rpx;
+  color: rgba(115, 123, 145, 0.5);
+  margin-top: 1.5vh;
   text-align: right;
-  margin-right: 30rpx;
-  color: gray;
 }
 
 .form_sms-code_container {
   display: flex;
-  margin: auto 15rpx;
 }
 
 .form_sms-code_btn {
-  width: 200rpx;
-  margin-left: 20rpx;
-  font-size: 40rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 162rpx;
+  height: 44rpx;
+  border: 0;
+  border-radius: 200rpx;
+  background-color: transparent;
+  background-image: linear-gradient(147deg, #47b13d 0%, #b8e986 100%);
+  font-size: 22rpx;
+  color: #fff;
+}
+
+.login-container-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-image: url('https://static.airbob.org/awesome-morning/login-background-white.png'),
+    url('https://static.airbob.org/awesome-morning/login-background-green.png');
+  background-size: 86.4vw 86.51vh, 100% 100%;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.login-form-container {
+  position: absolute;
+  top: 11.84vh;
+  width: 470rpx;
+}
+
+.login-title {
+  font-family: 'HYYakuHei';
+  font-size: 42rpx;
+  color: #47b13d;
+  margin-bottom: 8.25vh;
+  padding-left: 4.95vh;
+}
+
+.login-form {
+  width: 470rpx;
+  margin-left: 4.65vh;
+}
+
+.login-button-container {
+  position: absolute;
+  top: 48.38vh;
+  width: 68.53vw;
+  height: 8.55vh;
+  /* margin-top: 12.89vh; */
+  border-radius: 400rpx;
+  padding-bottom: 0;
+  background-color: transparent;
+  border: 0;
+}
+
+.login-button {
+  width: 100%;
+  height: 100%;
+  background-image: url('https://static.airbob.org/awesome-morning/login-button.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  margin-left: 0.3vh;
+  padding: 0 8vw 0 11vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-text {
+  font-size: 34rpx;
+  color: #fff;
+}
+
+.login-bottom-text {
+  position: absolute;
+  left: 8.8vw;
+  bottom: 4.05vh;
+  font-size: 32rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.login-bottom-illustration {
+  position: absolute;
+  right: 20rpx;
+  bottom: 0;
+  width: 320rpx;
+  height: 332rpx;
 }
